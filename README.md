@@ -1,0 +1,2 @@
+# Hrushi-
+Attendance calculator
