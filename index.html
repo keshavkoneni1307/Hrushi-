@@ -1,121 +1,255 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VIT-AP Attendance & Bunk Planner</title>
-  <style>
-    :root {
-      --bg: #0b132b;
-      --card-bg: #1c2541;
-      --accent: #3a86ff;
-      --text: #edf2f4;
-      --text-muted: #8d99ae;
-      --success: #38b000;
-      --danger: #d90429;
-      --border: #2b2d42;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 1rem; }
-    .calculator-card { background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 1.75rem; width: 100%; max-width: 420px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
-    h1 { font-size: 1.35rem; font-weight: 700; text-align: center; margin-bottom: 0.2rem; }
-    p.subtitle { color: var(--text-muted); font-size: 0.85rem; text-align: center; margin-bottom: 1.25rem; }
-    .input-group { margin-bottom: 1rem; }
-    label { display: block; font-size: 0.825rem; font-weight: 500; margin-bottom: 0.35rem; color: var(--text-muted); }
-    input { width: 100%; padding: 0.7rem 0.9rem; border-radius: 8px; border: 1px solid var(--border); background-color: var(--bg); color: var(--text); font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
-    input:focus { border-color: var(--accent); }
-    button { width: 100%; padding: 0.8rem; border-radius: 8px; border: none; background-color: var(--accent); color: #fff; font-size: 0.95rem; font-weight: 600; cursor: pointer; margin-top: 0.4rem; transition: opacity 0.2s; }
-    button:hover { opacity: 0.9; }
-    .result-box { margin-top: 1.25rem; padding: 1.1rem; border-radius: 10px; background-color: var(--bg); border: 1px solid var(--border); display: none; text-align: center; }
-    .result-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 0.2rem; }
-    .pct-info { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.6rem; }
-    .status-badge { display: inline-block; padding: 0.2rem 0.65rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.65rem; }
-    .status-safe { background-color: rgba(56, 176, 0, 0.15); color: var(--success); }
-    .status-warning { background-color: rgba(217, 4, 41, 0.15); color: var(--danger); }
-    .advice-text { font-size: 0.9rem; line-height: 1.4; color: var(--text-muted); }
-    .advice-text strong { color: var(--text); }
-  </style>
+  <title>VIT-AP Smart Bunk Tracker</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-4 sm:p-8">
 
-  <div class="calculator-card">
-    <h1>VIT-AP Attendance Tracker</h1>
-    <p class="subtitle">Bunk & Attendance Recovery Planner</p>
+  <div class="max-w-2xl mx-auto space-y-6">
+    
+    <!-- Header -->
+    <header class="text-center py-4 border-b border-slate-700">
+      <h1 class="text-3xl font-extrabold text-blue-400">VIT-AP Attendance Tracker</h1>
+      <p class="text-slate-400 text-sm mt-1">Smart Bunk & Date Finder</p>
+    </header>
 
-    <div class="input-group">
-      <label for="attendedClasses">Classes Attended (A)</label>
-      <input type="number" id="attendedClasses" placeholder="e.g. 21" min="0">
+    <!-- Step 1: Attendance Data -->
+    <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700 space-y-4">
+      <h2 class="text-lg font-bold text-slate-200 border-b border-slate-700 pb-2">1. Current Attendance</h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Attended Classes</label>
+          <input type="number" id="attended" value="25" min="0"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Total Happened</label>
+          <input type="number" id="total" value="30" min="0"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Target %</label>
+          <input type="number" id="targetPct" value="75" min="1" max="100"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500">
+        </div>
+      </div>
+
+      <!-- Current Percentage Display -->
+      <div class="flex items-center justify-between bg-slate-900 p-3.5 rounded-xl border border-slate-700">
+        <span class="text-xs text-slate-400 font-medium">Current Percentage:</span>
+        <span id="currentPctDisplay" class="text-xl font-black text-green-400">0.00%</span>
+      </div>
     </div>
 
-    <div class="input-group">
-      <label for="totalClasses">Total Classes Conducted (N)</label>
-      <input type="number" id="totalClasses" placeholder="e.g. 26" min="1">
+    <!-- Step 2: Subject Schedule & End Date -->
+    <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700 space-y-4">
+      <h2 class="text-lg font-bold text-slate-200 border-b border-slate-700 pb-2">2. Subject Schedule & Last Date</h2>
+
+      <div>
+        <label class="block text-xs font-semibold text-slate-400 mb-2">Kon-kon se din is subject ki class hoti hai?</label>
+        <div class="grid grid-cols-4 sm:grid-cols-7 gap-2">
+          <!-- Mon to Sun Checkboxes -->
+          <label class="flex flex-col items-center justify-center p-2 bg-slate-900 rounded-lg border border-slate-700 cursor-pointer hover:border-blue-500">
+            <input type="checkbox" class="day-check accent-blue-500 mb-1" value="1">
+            <span class="text-xs font-bold text-slate-300">Mon</span>
+          </label>
+          <label class="flex flex-col items-center justify-center p-2 bg-slate-900 rounded-lg border border-slate-700 cursor-pointer hover:border-blue-500">
+            <input type="checkbox" class="day-check accent-blue-500 mb-1" value="2" checked>
+            <span class="text-xs font-bold text-slate-300">Tue</span>
+          </label>
+          <label class="flex flex-col items-center justify-center p-2 bg-slate-900 rounded-lg border border-slate-700 cursor-pointer hover:border-blue-500">
+            <input type="checkbox" class="day-check accent-blue-500 mb-1" value="3">
+            <span class="text-xs font-bold text-slate-300">Wed</span>
+          </label>
+          <label class="flex flex-col items-center justify-center p-2 bg-slate-900 rounded-lg border border-slate-700 cursor-pointer hover:border-blue-500">
+            <input type="checkbox" class="day-check accent-blue-500 mb-1" value="4" checked>
+            <span class="text-xs font-bold text-slate-300">Thu</span>
+          </label>
+          <label class="flex flex-col items-center justify-center p-2 bg-slate-900 rounded-lg border border-slate-700 cursor-pointer hover:border-blue-500">
+            <input type="checkbox" class="day-check accent-blue-500 mb-1" value="5" checked>
+            <span class="text-xs font-bold text-slate-300">Fri</span>
+          </label>
+          <label class="flex flex-col items-center justify-center p-2 bg-slate-900 rounded-lg border border-slate-700 cursor-pointer hover:border-blue-500">
+            <input type="checkbox" class="day-check accent-blue-500 mb-1" value="6" checked>
+            <span class="text-xs font-bold text-slate-300">Sat</span>
+          </label>
+          <label class="flex flex-col items-center justify-center p-2 bg-slate-900 rounded-lg border border-slate-700 cursor-pointer hover:border-blue-500">
+            <input type="checkbox" class="day-check accent-blue-500 mb-1" value="0">
+            <span class="text-xs font-bold text-slate-300">Sun</span>
+          </label>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-slate-400 mb-1">Classes Last Date (End Date)</label>
+        <input type="date" id="endDate"
+          class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500">
+      </div>
     </div>
 
-    <div class="input-group">
-      <label for="targetPct">Target Percentage (Y %)</label>
-      <input type="number" id="targetPct" value="75" min="1" max="99" step="0.1">
+    <!-- Output Section: Bunk Report -->
+    <div id="reportCard" class="hidden bg-slate-800 p-6 rounded-2xl shadow-xl border border-blue-500/30 space-y-4">
+      <h2 class="text-lg font-bold text-blue-400 border-b border-slate-700 pb-2">🎯 Smart Bunk Results</h2>
+
+      <div class="grid grid-cols-3 gap-2 text-center">
+        <div class="bg-slate-900 p-3 rounded-xl border border-slate-700">
+          <span class="text-[10px] sm:text-xs text-slate-400 block">Remaining Classes</span>
+          <p id="resFutureCount" class="text-base sm:text-lg font-bold text-slate-200">0</p>
+        </div>
+        <div class="bg-slate-900 p-3 rounded-xl border border-slate-700">
+          <span class="text-[10px] sm:text-xs text-slate-400 block">Final Total</span>
+          <p id="resFinalTotal" class="text-base sm:text-lg font-bold text-slate-200">0</p>
+        </div>
+        <div class="bg-slate-900 p-3 rounded-xl border border-slate-700">
+          <span class="text-[10px] sm:text-xs text-slate-400 block">Allowed Bunks</span>
+          <p id="resAllowedBunks" class="text-base sm:text-lg font-bold text-green-400">0</p>
+        </div>
+      </div>
+
+      <div id="bunkAlertBox"></div>
+
+      <div id="datesListContainer" class="hidden space-y-2">
+        <h3 class="text-xs font-semibold text-slate-300">Kon-Kon se din skip kar sakte ho:</h3>
+        <div id="datesList" class="max-h-52 overflow-y-auto space-y-1.5 pr-1"></div>
+      </div>
     </div>
 
-    <button onclick="calculateBunks()">Calculate Strategy</button>
-
-    <div class="result-box" id="resultBox">
-      <div id="statusBadge" class="status-badge"></div>
-      <div class="result-title" id="resultTitle">0 Classes</div>
-      <p class="pct-info" id="pctInfo"></p>
-      <p class="advice-text" id="adviceText"></p>
-    </div>
   </div>
 
+  <!-- JavaScript Code -->
   <script>
-    function calculateBunks() {
-      const attended = parseInt(document.getElementById('attendedClasses').value);
-      const total = parseInt(document.getElementById('totalClasses').value);
-      const target = parseFloat(document.getElementById('targetPct').value);
+    const attendedEl = document.getElementById('attended');
+    const totalEl = document.getElementById('total');
+    const targetPctEl = document.getElementById('targetPct');
+    const endDateEl = document.getElementById('endDate');
+    const dayCheckboxes = document.querySelectorAll('.day-check');
 
-      const resultBox = document.getElementById('resultBox');
-      const statusBadge = document.getElementById('statusBadge');
-      const resultTitle = document.getElementById('resultTitle');
-      const pctInfo = document.getElementById('pctInfo');
-      const adviceText = document.getElementById('adviceText');
+    const currentPctDisplay = document.getElementById('currentPctDisplay');
+    const reportCard = document.getElementById('reportCard');
+    const resFutureCount = document.getElementById('resFutureCount');
+    const resFinalTotal = document.getElementById('resFinalTotal');
+    const resAllowedBunks = document.getElementById('resAllowedBunks');
+    const bunkAlertBox = document.getElementById('bunkAlertBox');
+    const datesListContainer = document.getElementById('datesListContainer');
+    const datesList = document.getElementById('datesList');
 
-      if (isNaN(attended) || isNaN(total) || isNaN(target) || attended < 0 || total <= 0 || target <= 0 || target >= 100) {
-        alert("Please enter valid positive numbers.");
-        return;
-      }
-      if (attended > total) {
-        alert("Attended classes cannot exceed total classes.");
-        return;
-      }
+    function calculatePlanner() {
+      const att = Math.max(0, parseInt(attendedEl.value) || 0);
+      const tot = Math.max(0, parseInt(totalEl.value) || 0);
+      const target = Math.max(1, parseInt(targetPctEl.value) || 75);
 
-      const currentPct = (attended / total) * 100;
-      resultBox.style.display = "block";
-      pctInfo.innerHTML = `Current Attendance: <strong>${currentPct.toFixed(1)}%</strong>`;
-
-      if (currentPct >= target) {
-        const maxSkips = Math.floor((100 * attended - target * total) / target);
-        statusBadge.innerText = "Safe Zone";
-        statusBadge.className = "status-badge status-safe";
-        resultTitle.style.color = "var(--success)";
-
-        if (maxSkips > 0) {
-          resultTitle.innerText = `Skip ${maxSkips} Class${maxSkips > 1 ? 'es' : ''}`;
-          adviceText.innerHTML = `You can safely miss the next <strong>${maxSkips}</strong> class(es) while staying at or above <strong>${target}%</strong>.`;
-        } else {
-          resultTitle.innerText = `0 Classes To Skip`;
-          adviceText.innerHTML = `You are right at the border! Do not miss your next class.`;
-        }
+      // 1. Current Percentage
+      if (tot > 0) {
+        const currPct = ((att / tot) * 100).toFixed(2);
+        currentPctDisplay.innerText = currPct + "%";
+        currentPctDisplay.className = currPct >= target ? "text-xl font-black text-green-400" : "text-xl font-black text-red-400";
       } else {
-        const reqClasses = Math.ceil((target * total - 100 * attended) / (100 - target));
-        statusBadge.innerText = "Shortage Alert";
-        statusBadge.className = "status-badge status-warning";
-        resultTitle.style.color = "var(--danger)";
+        currentPctDisplay.innerText = "0.00%";
+      }
 
-        resultTitle.innerText = `Attend ${reqClasses} Class${reqClasses > 1 ? 'es' : ''}`;
-        adviceText.innerHTML = `You must attend the next <strong>${reqClasses}</strong> consecutive class(es) to reach <strong>${target}%</strong>.`;
+      // 2. Schedule Calculation
+      const endDateVal = endDateEl.value;
+      if (!endDateVal) {
+        reportCard.classList.add('hidden');
+        return;
+      }
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const targetEnd = new Date(endDateVal);
+      targetEnd.setHours(0, 0, 0, 0);
+
+      if (isNaN(targetEnd.getTime()) || targetEnd <= today) {
+        reportCard.classList.add('hidden');
+        return;
+      }
+
+      // Active days selected
+      const selectedDays = [];
+      dayCheckboxes.forEach(cb => {
+        if (cb.checked) selectedDays.push(parseInt(cb.value));
+      });
+
+      let futureClassesCount = 0;
+      const upcomingDates = [];
+
+      let currIter = new Date(today);
+      currIter.setDate(currIter.getDate() + 1); // start from tomorrow
+
+      while (currIter <= targetEnd) {
+        const dayIdx = currIter.getDay(); // 0=Sun, 1=Mon, etc.
+
+        if (selectedDays.includes(dayIdx)) {
+          futureClassesCount++;
+          upcomingDates.push({
+            dateStr: currIter.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+            dayName: currIter.toLocaleDateString('en-IN', { weekday: 'short' })
+          });
+        }
+        currIter.setDate(currIter.getDate() + 1);
+      }
+
+      const finalTotalClasses = tot + futureClassesCount;
+      const requiredAttended = Math.ceil((target / 100) * finalTotalClasses);
+      const maxAttendedPossible = att + futureClassesCount;
+      const maxBunksAllowed = maxAttendedPossible - requiredAttended;
+
+      reportCard.classList.remove('hidden');
+      resFutureCount.innerText = futureClassesCount;
+      resFinalTotal.innerText = finalTotalClasses;
+
+      if (maxBunksAllowed < 0) {
+        resAllowedBunks.innerText = "0";
+        resAllowedBunks.className = "text-base sm:text-lg font-bold text-red-400";
+        bunkAlertBox.innerHTML = `
+          <div class="bg-red-500/10 border border-red-500/30 p-3 rounded-xl text-red-300 text-xs sm:text-sm">
+            ⚠️ <strong>Alert:</strong> Aap target ${target}% maintain nahi kar payenge agar ek bhi class skip ki! Aapko at least ${Math.abs(maxBunksAllowed)} aur classes attend karni padengi.
+          </div>
+        `;
+        datesListContainer.classList.add('hidden');
+      } else {
+        resAllowedBunks.innerText = maxBunksAllowed;
+        resAllowedBunks.className = "text-base sm:text-lg font-bold text-green-400";
+        bunkAlertBox.innerHTML = `
+          <div class="bg-green-500/10 border border-green-500/30 p-3 rounded-xl text-green-300 text-xs sm:text-sm">
+            🎉 Aap end date tak Total <strong>${maxBunksAllowed}</strong> classes skip kar sakte hain!
+          </div>
+        `;
+
+        // Render specific skip dates
+        datesList.innerHTML = '';
+        const datesToSkip = upcomingDates.slice(0, maxBunksAllowed);
+
+        if (datesToSkip.length > 0) {
+          datesToSkip.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'flex justify-between items-center bg-slate-900 px-3 py-2 rounded-lg border border-slate-700/60 text-xs';
+            row.innerHTML = `
+              <span class="font-semibold text-slate-200">${item.dateStr} (${item.dayName})</span>
+              <span class="bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded font-medium">Safe to Skip</span>
+            `;
+            datesList.appendChild(row);
+          });
+          datesListContainer.classList.remove('hidden');
+        } else {
+          datesListContainer.classList.add('hidden');
+        }
       }
     }
+
+    // Attach Event Listeners
+    document.querySelectorAll('input').forEach(input => {
+      input.addEventListener('input', calculatePlanner);
+      input.addEventListener('change', calculatePlanner);
+    });
+
+    calculatePlanner();
   </script>
 </body>
 </html>
