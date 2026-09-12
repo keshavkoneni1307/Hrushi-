@@ -1,136 +1,437 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="hi" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VIT-AP Smart Bunk Tracker</title>
+  <title>VIT-AP Smart Bunk & Attendance Dashboard</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-4 sm:p-8">
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar { width: 6px; }
+    .dark ::-webkit-scrollbar-track { background: #090d16; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    .dark ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
 
-  <div class="max-w-2xl mx-auto space-y-6">
+    /* Custom Glow Effects */
+    .glow-safe { filter: drop-shadow(0px 0px 10px rgba(6, 182, 212, 0.5)); }
+    .glow-danger { filter: drop-shadow(0px 0px 10px rgba(244, 63, 94, 0.5)); }
+    
+    /* Subtle Background Mesh in Dark Mode */
+    .dark body {
+      background-color: #080b11;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.08) 0px, transparent 50%);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:text-slate-100 min-h-screen p-4 sm:p-8 flex items-center justify-center transition-colors duration-300">
+
+  <div class="max-w-4xl w-full space-y-6">
     
     <!-- Header -->
-    <header class="text-center py-4 border-b border-slate-700">
-      <h1 class="text-3xl font-extrabold text-blue-400">VIT-AP Attendance Tracker</h1>
-      <p class="text-slate-400 text-sm mt-1">Smart Bunk & Date Finder</p>
+    <header class="flex flex-col sm:flex-row items-center justify-between bg-white/80 dark:bg-[#111827]/80 backdrop-blur-xl p-6 rounded-3xl border border-slate-200 dark:border-indigo-950/60 shadow-xl dark:shadow-[0_10px_30px_rgba(0,0,0,0.5)] gap-4 transition-colors duration-300">
+      <div class="flex items-center gap-4">
+        <div class="h-12 w-12 rounded-2xl bg-gradient-to-tr from-indigo-600 via-blue-500 to-cyan-400 flex items-center justify-center text-white text-xl shadow-lg shadow-indigo-500/30">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <div>
+          <h1 class="text-2xl font-extrabold text-slate-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-white dark:via-slate-200 dark:to-cyan-300">
+            VIT-AP Attendance Tracker
+          </h1>
+          <p class="text-xs text-slate-500 dark:text-indigo-300/60 font-medium">Smart Bunk & Attendance Recovery Planner</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <span class="text-xs px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-600 dark:text-cyan-400 font-semibold tracking-wide flex items-center gap-2 shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> Live Planner
+        </span>
+
+        <!-- Theme Toggle Button -->
+        <button id="themeToggleBtn" onclick="toggleTheme()" 
+          class="p-2.5 rounded-2xl bg-slate-100 dark:bg-[#1b2438] text-slate-600 dark:text-amber-400 hover:bg-slate-200 dark:hover:bg-[#232e48] border border-slate-200 dark:border-indigo-900/50 transition-all shadow-md">
+          <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+        </button>
+      </div>
     </header>
 
-    <!-- Step 1: Attendance Data -->
-    <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700 space-y-4">
-      <h2 class="text-lg font-bold text-slate-200 border-b border-slate-700 pb-2">1. Current Attendance</h2>
+    <!-- Main Grid Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
       
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div>
-          <label class="block text-xs font-semibold text-slate-400 mb-1">Attended Classes</label>
-          <input type="number" id="attended" value="25" min="0"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500">
+      <!-- LEFT COLUMN: Inputs (7 Cols) -->
+      <div class="lg:col-span-7 space-y-6">
+        
+        <!-- Input Card 1: Attendance Numbers -->
+        <div class="bg-white dark:bg-[#111827]/70 border border-slate-200 dark:border-indigo-950/50 p-6 rounded-3xl shadow-lg dark:shadow-2xl space-y-5 backdrop-blur-md transition-colors duration-300">
+          <div class="flex items-center gap-2 text-slate-700 dark:text-cyan-400 font-bold text-sm uppercase tracking-wider">
+            <i class="fa-solid fa-calculator"></i>
+            <span>Current Attendance Data</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Attended</label>
+              <input type="number" id="attended" value="25" min="0"
+                class="w-full bg-slate-50 dark:bg-[#0d1322] border border-slate-200 dark:border-indigo-900/60 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-cyan-100 font-semibold focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Total Classes</label>
+              <input type="number" id="total" value="30" min="0"
+                class="w-full bg-slate-50 dark:bg-[#0d1322] border border-slate-200 dark:border-indigo-900/60 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-cyan-100 font-semibold focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Target %</label>
+              <input type="number" id="targetPct" value="75" min="1" max="100"
+                class="w-full bg-slate-50 dark:bg-[#0d1322] border border-slate-200 dark:border-indigo-900/60 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-cyan-100 font-semibold focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all">
+            </div>
+          </div>
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-400 mb-1">Total Happened</label>
-          <input type="number" id="total" value="30" min="0"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500">
+
+        <!-- Input Card 2: Schedule & Date Inputs -->
+        <div class="bg-white dark:bg-[#111827]/70 border border-slate-200 dark:border-indigo-950/50 p-6 rounded-3xl shadow-lg dark:shadow-2xl space-y-5 backdrop-blur-md transition-colors duration-300">
+          
+          <!-- Improvised Weekly Schedule -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2 text-slate-700 dark:text-cyan-400 font-bold text-sm uppercase tracking-wider">
+                <i class="fa-regular fa-calendar-days"></i>
+                <span>Weekly Schedule</span>
+              </div>
+              
+              <!-- Presets -->
+              <div class="flex items-center gap-1.5 text-[11px]">
+                <button type="button" onclick="setPreset('mon-fri')" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#1b2438] hover:bg-slate-200 dark:hover:bg-[#25324e] text-slate-600 dark:text-indigo-200 font-medium border border-slate-200 dark:border-indigo-900/40 transition-all">Mon-Fri</button>
+                <button type="button" onclick="setPreset('mon-sat')" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#1b2438] hover:bg-slate-200 dark:hover:bg-[#25324e] text-slate-600 dark:text-indigo-200 font-medium border border-slate-200 dark:border-indigo-900/40 transition-all">Mon-Sat</button>
+                <button type="button" onclick="setPreset('clear')" class="px-2 py-1 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20 font-medium transition-all">Clear</button>
+              </div>
+            </div>
+
+            <!-- Enhanced Week Cards -->
+            <div class="grid grid-cols-7 gap-1.5 sm:gap-2">
+              
+              <!-- Mon (1) -->
+              <div id="day-card-1" onclick="toggleDayCard(1)" class="cursor-pointer flex flex-col items-center justify-between p-2 rounded-2xl border border-slate-200 dark:border-indigo-950/80 bg-slate-50 dark:bg-[#0d1322] transition-all select-none hover:border-cyan-500/50">
+                <span class="text-xs font-bold text-slate-600 dark:text-indigo-300/70">Mon</span>
+                <span id="day-badge-1" class="my-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-slate-200 dark:bg-[#1a2337] text-slate-500 dark:text-slate-400">OFF</span>
+                <div class="flex items-center gap-1" onclick="event.stopPropagation()">
+                  <button onclick="adjustClassCount(1, -1)" class="text-[10px] w-4 h-4 rounded bg-slate-200 dark:bg-[#1b2438] text-slate-700 dark:text-indigo-200 flex items-center justify-center hover:bg-slate-300 dark:hover:bg-indigo-900/50">-</button>
+                  <span id="day-cnt-1" class="text-xs font-extrabold text-slate-800 dark:text-white">0</span>
+                  <button onclick="adjustClassCount(1, 1)" class="text-[10px] w-4 h-4 rounded bg-slate-200 dark:bg-[#1b2438] text-slate-700 dark:text-indigo-200 flex items-center justify-center hover:bg-slate-300 dark:hover:bg-indigo-900/50">+</button>
+                </div>
+              </div>
+
+              <!-- Tue (2) -->
+              <div id="day-card-2" onclick="toggleDayCard(2)" class="cursor-pointer flex flex-col items-center justify-between p-2 rounded-2xl border border-slate-200 dark:border-indigo-950/80 bg-slate-50 dark:bg-[#0d1322] transition-all select-none hover:border-cyan-500/50">
+                <span class="text-xs font-bold text-slate-600 dark:text-indigo-300/70">Tue</span>
+                <span id="day-badge-2" class="my-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-slate-200 dark:bg-[#1a2337] text-slate-500 dark:text-slate-400">OFF</span>
+                <div class="flex items-center gap-1" onclick="event.stopPropagation()">
+                  <button onclick="adjustClassCount(2, -1)" class="text-[10px] w-4 h-4 rounded bg-slate-200 dark:bg-[#1b2438] text-slate-700 dark:text-indigo-200 flex items-center justify-center hover:bg-slate-300 dark:hover:bg-indigo-900/50">-</button>
+                  <span id="day-cnt-2" class="text-xs font-extrabold text-slate-800 dark:text-white">0</span>
+                  <button onclick="adjustClassCount(2, 1)" class="text-[10px] w-4 h-4 rounded bg-slate-200 dark:bg-[#1b2438] text-slate-700 dark:text-indigo-200 flex items-center justify-center hover:bg-slate-300 dark:hover:bg-indigo-900/50">+</button>
+                </div>
+              </div>
+
+              <!-- Wed (3) -->
+              <div id="day-card-3" onclick="toggleDayCard(3)" class="cursor-pointer flex flex-col items-center justify-between p-2 rounded-2xl border border-slate-200 dark:border-indigo-950/80 bg-slate-50 dark:bg-[#0d1322] transition-all select-none hover:border-cyan-500/50">
+                <span class="text-xs font-bold text-slate-600 dark:text-indigo-300/70">Wed</span>
+                <span id="day-badge-3" class="my-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-slate-200 dark:bg-[#1a2337] text-slate-500 dark:text-slate-400">OFF</span>
+                <div class="flex items-center gap-1" onclick="event.stopPropagation()">
+                  <button onclick="adjustClassCount(3, -1)" class="text-[10px] w-4 h-4 rounded bg-slate-200 dark:bg-[#1b2438] text-slate-700 dark:text-indigo-200 flex items-center justify-center hover:bg-slate-300 dark:hover:bg-indigo-900/50">-</button>
+                  <span id="day-cnt-3" class="text-xs font-extrabold text-slate-800 dark:text-white">0</span>
+                  <button onclick="adjustClassCount(3, 1)" class="text-[10px] w-4 h-4 rounded bg-slate-200 dark:bg-[#1b2438] text-slate-700 dark:text-indigo-200 flex items-center justify-center hover:bg-slate-300 dark:hover:bg-indigo-900/50">+</button>
+                </div>
+              </div>
+
+              <!-- Thu (4) -->
+              <div id="day-card-4" onclick="toggleDayCard(4)" class="cursor-pointer flex flex-col items-center justify-between p-2 rounded-2xl border border-slate-200 dark:border-indigo-950/80 bg-slate-50 dark:bg-[#0d1322] transition-all select-none hover:border-cyan-500/50">
+                <span class="text-xs font-bold text-slate-600 dark:text-indigo-300/70">Thu</span>
+                <span id="day-badge-4" class="my-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-slate-200 dark:bg-[#1a2337] text-slate-500 dark:text-slate-400">OFF</span>
+                <div class="flex items-center gap-1" onclick="event.stopPropagation()">
+                  <button onclick="adjustClassCount(4, -1)" class="text-[10px] w-4 h-4 rounded bg-slate-200 dark:bg-[#1b2438] text-slate-700 dark:text-indigo-200 flex items-center justify-center hover:bg-slate-300 dark:hover:bg-indigo-900/50">-</button>
+                  <span id="day-cnt-4" class="text-xs font-extrabold text-slate-800 dark:text-white">0</span>
+                  <button onclick="adjustClassCount(4, 1)" class="text-[10px] w-4 h-4 rounded bg-slate-200 dark:bg-[#1b2438] text-slate-700 dark:text-indigo-200 flex items-center justify-center hover:bg-slate-300 dark:hover:bg-indigo-900/50">+</button>
+                </div>
+              </div>
+
+              <!-- Fri (5) -->
+              <div id="day-card-5" onclick="toggleDayCard(5)" class="cursor-pointer flex flex-col items-center justify-between p-2 rounded-2xl border border-slate-200 dark:border-indigo-950/80 bg-slate-50 dark:bg-[#0d1322] transition-all select-none hover:border-cyan-500/50">
+                <span class="text-xs font-bold text-slate-600 dark:text-indigo-300/70">Fri</span>
+                <span id="day-badge-5" class="my-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-slate-200 dark:bg-[#1a2337] text-slate-500 dark:text-slate-400">OFF</span>
+                <div class="flex items-center gap-1" onclick="event.stopPropagation()">
+                  <button onclick="adjustClassCount(5, -1)" class="text-[10px] w-4 h-4 rounded bg-slate-200 dark:bg-[#1b2438] text-slate-700 dark:text-indigo-200 flex items-center justify-center hover:bg-slate-300 dark:hover:bg-indigo-900/50">-</button>
+                  <span id="day-cnt-5" class="text-xs font-extrabold text-slate-800 dark:text-white">0</span>
+                  <button onclick="adjustClassCount(5, 1)" class="text-[10px] w-4 h-4 rounded bg-slate-200 dark:bg-[#1b2438] text-slate-700 dark:text-indigo-200 flex items-center justify-center hover:bg-slate-300 dark:hover:bg-indigo-900/50">+</button>
+                </div>
+              </div>
+
+              <!-- Sat (6) -->
+              <div id="day-card-6" onclick="toggleDayCard(6)" class="cursor-pointer flex flex-col items-center justify-between p-2 rounded-2xl border border-slate-200 dark:border-indigo-950/80 bg-slate-50 dark:bg-[#0d1322] transition-all select-none hover:border-cyan-500/50">
+                <span class="text-xs font-bold text-slate-600 dark:text-indigo-300/70">Sat</span>
+                <span id="day-badge-6" class="my-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-slate-200 dark:bg-[#1a2337] text-slate-500 dark:text-slate-400">OFF</span>
+                <div class="flex items-center gap-1" onclick="event.stopPropagation()">
+                  <button onclick="adjustClassCount(6, -1)" class="text-[10px] w-4 h-4 rounded bg-slate-200 dark:bg-[#1b2438] text-slate-700 dark:text-indigo-200 flex items-center justify-center hover:bg-slate-300 dark:hover:bg-indigo-900/50">-</button>
+                  <span id="day-cnt-6" class="text-xs font-extrabold text-slate-800 dark:text-white">0</span>
+                  <button onclick="adjustClassCount(6, 1)" class="text-[10px] w-4 h-4 rounded bg-slate-200 dark:bg-[#1b2438] text-slate-700 dark:text-indigo-200 flex items-center justify-center hover:bg-slate-300 dark:hover:bg-indigo-900/50">+</button>
+                </div>
+              </div>
+
+              <!-- Sun (0) -->
+              <div id="day-card-0" onclick="toggleDayCard(0)" class="cursor-pointer flex flex-col items-center justify-between p-2 rounded-2xl border border-slate-200 dark:border-indigo-950/80 bg-slate-50 dark:bg-[#0d1322] transition-all select-none hover:border-cyan-500/50">
+                <span class="text-xs font-bold text-slate-600 dark:text-indigo-300/70">Sun</span>
+                <span id="day-badge-0" class="my-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-slate-200 dark:bg-[#1a2337] text-slate-500 dark:text-slate-400">OFF</span>
+                <div class="flex items-center gap-1" onclick="event.stopPropagation()">
+                  <button onclick="adjustClassCount(0, -1)" class="text-[10px] w-4 h-4 rounded bg-slate-200 dark:bg-[#1b2438] text-slate-700 dark:text-indigo-200 flex items-center justify-center hover:bg-slate-300 dark:hover:bg-indigo-900/50">-</button>
+                  <span id="day-cnt-0" class="text-xs font-extrabold text-slate-800 dark:text-white">0</span>
+                  <button onclick="adjustClassCount(0, 1)" class="text-[10px] w-4 h-4 rounded bg-slate-200 dark:bg-[#1b2438] text-slate-700 dark:text-indigo-200 flex items-center justify-center hover:bg-slate-300 dark:hover:bg-indigo-900/50">+</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Manual Date Entry + Calendar Input -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5">
+              Semester Last Date (Type Manually or Pick)
+            </label>
+            <div class="flex items-center gap-2">
+              <input type="text" id="manualDateInput" placeholder="DD-MM-YYYY (e.g. 30-11-2026)"
+                class="w-full bg-slate-50 dark:bg-[#0d1322] border border-slate-200 dark:border-indigo-900/60 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-cyan-100 font-semibold focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm">
+              <div class="relative flex-shrink-0">
+                <input type="date" id="nativeDatePicker" class="opacity-0 absolute inset-0 w-full h-full cursor-pointer">
+                <button type="button" class="p-2.5 rounded-xl bg-slate-100 dark:bg-[#1b2438] text-slate-600 dark:text-cyan-400 border border-slate-200 dark:border-indigo-900/50 hover:bg-slate-200 dark:hover:bg-[#232e48] transition-all">
+                  <i class="fa-regular fa-calendar text-base"></i>
+                </button>
+              </div>
+            </div>
+            <span class="text-[10px] text-slate-400 dark:text-indigo-300/40 mt-1 block">Type `DD-MM-YYYY` format or click icon to choose date.</span>
+          </div>
+
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-400 mb-1">Target %</label>
-          <input type="number" id="targetPct" value="75" min="1" max="100"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500">
-        </div>
+
       </div>
 
-      <!-- Current Percentage Display -->
-      <div class="flex items-center justify-between bg-slate-900 p-3.5 rounded-xl border border-slate-700">
-        <span class="text-xs text-slate-400 font-medium">Current Percentage:</span>
-        <span id="currentPctDisplay" class="text-xl font-black text-green-400">0.00%</span>
-      </div>
-    </div>
+      <!-- RIGHT COLUMN: Visual Dashboard & Gauge (5 Cols) -->
+      <div class="lg:col-span-5 space-y-6 flex flex-col justify-between">
+        
+        <!-- Gauge Card -->
+        <div class="bg-white dark:bg-[#111827]/80 border border-slate-200 dark:border-indigo-950/60 p-6 rounded-3xl shadow-lg dark:shadow-2xl space-y-5 backdrop-blur-md relative transition-colors duration-300">
+          
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-indigo-900/40 pb-3">
+            <span class="text-xs font-bold text-slate-500 dark:text-indigo-300/70 uppercase tracking-wider">Live Dashboard</span>
+            <span id="badgeDisplay" class="text-[11px] px-2.5 py-1 rounded-full font-bold bg-emerald-500/10 text-emerald-600 dark:text-cyan-400 border border-cyan-500/30 shadow-sm">
+              Safe Zone
+            </span>
+          </div>
 
-    <!-- Step 2: Subject Schedule & End Date -->
-    <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700 space-y-4">
-      <h2 class="text-lg font-bold text-slate-200 border-b border-slate-700 pb-2">2. Subject Schedule & Last Date</h2>
+          <!-- Improvised SVG Gauge with Gradient & Glow -->
+          <div class="flex flex-col items-center justify-center py-2 relative">
+            <svg class="w-48 h-48 transform -rotate-90">
+              <defs>
+                <linearGradient id="safeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#06b6d4" />
+                  <stop offset="100%" stop-color="#3b82f6" />
+                </linearGradient>
+                <linearGradient id="dangerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#f43f5e" />
+                  <stop offset="100%" stop-color="#e11d48" />
+                </linearGradient>
+              </defs>
+              <circle cx="96" cy="96" r="76" stroke="currentColor" stroke-width="14" class="text-slate-200 dark:text-[#090d16]" fill="transparent" />
+              <circle id="progressCircle" cx="96" cy="96" r="76" stroke="url(#safeGradient)" stroke-width="14" 
+                class="transition-all duration-700 ease-out glow-safe" 
+                stroke-dasharray="477.5" 
+                stroke-dashoffset="100" 
+                stroke-linecap="round" 
+                fill="transparent" />
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span id="currentPctDisplay" class="text-4xl font-black tracking-tight text-slate-900 dark:text-white">0%</span>
+              <span class="text-[10px] text-slate-400 dark:text-indigo-300/60 uppercase tracking-widest font-bold mt-0.5">Current Attendance</span>
+            </div>
+          </div>
 
-      <div>
-        <label class="block text-xs font-semibold text-slate-400 mb-2">Kon-kon se din is subject ki class hoti hai?</label>
-        <div class="grid grid-cols-4 sm:grid-cols-7 gap-2">
-          <!-- Mon to Sun Checkboxes -->
-          <label class="flex flex-col items-center justify-center p-2 bg-slate-900 rounded-lg border border-slate-700 cursor-pointer hover:border-blue-500">
-            <input type="checkbox" class="day-check accent-blue-500 mb-1" value="1">
-            <span class="text-xs font-bold text-slate-300">Mon</span>
-          </label>
-          <label class="flex flex-col items-center justify-center p-2 bg-slate-900 rounded-lg border border-slate-700 cursor-pointer hover:border-blue-500">
-            <input type="checkbox" class="day-check accent-blue-500 mb-1" value="2" checked>
-            <span class="text-xs font-bold text-slate-300">Tue</span>
-          </label>
-          <label class="flex flex-col items-center justify-center p-2 bg-slate-900 rounded-lg border border-slate-700 cursor-pointer hover:border-blue-500">
-            <input type="checkbox" class="day-check accent-blue-500 mb-1" value="3">
-            <span class="text-xs font-bold text-slate-300">Wed</span>
-          </label>
-          <label class="flex flex-col items-center justify-center p-2 bg-slate-900 rounded-lg border border-slate-700 cursor-pointer hover:border-blue-500">
-            <input type="checkbox" class="day-check accent-blue-500 mb-1" value="4" checked>
-            <span class="text-xs font-bold text-slate-300">Thu</span>
-          </label>
-          <label class="flex flex-col items-center justify-center p-2 bg-slate-900 rounded-lg border border-slate-700 cursor-pointer hover:border-blue-500">
-            <input type="checkbox" class="day-check accent-blue-500 mb-1" value="5" checked>
-            <span class="text-xs font-bold text-slate-300">Fri</span>
-          </label>
-          <label class="flex flex-col items-center justify-center p-2 bg-slate-900 rounded-lg border border-slate-700 cursor-pointer hover:border-blue-500">
-            <input type="checkbox" class="day-check accent-blue-500 mb-1" value="6" checked>
-            <span class="text-xs font-bold text-slate-300">Sat</span>
-          </label>
-          <label class="flex flex-col items-center justify-center p-2 bg-slate-900 rounded-lg border border-slate-700 cursor-pointer hover:border-blue-500">
-            <input type="checkbox" class="day-check accent-blue-500 mb-1" value="0">
-            <span class="text-xs font-bold text-slate-300">Sun</span>
-          </label>
+          <!-- Attendance Linear Target Indicator Bar -->
+          <div class="space-y-1.5 pt-1">
+            <div class="flex justify-between text-[11px] font-bold">
+              <span class="text-slate-400 dark:text-indigo-300/60">Target Gap Indicator</span>
+              <span id="targetGapText" class="text-cyan-600 dark:text-cyan-400">Target: 75%</span>
+            </div>
+            <div class="w-full bg-slate-100 dark:bg-[#080b11] h-3 rounded-full overflow-hidden p-0.5 border border-slate-200 dark:border-indigo-900/40">
+              <div id="targetBar" class="h-full bg-gradient-to-r from-cyan-500 to-indigo-500 rounded-full transition-all duration-500 w-0"></div>
+            </div>
+          </div>
+
+          <!-- Key Metrics Pills -->
+          <div class="grid grid-cols-3 gap-2 text-center pt-2">
+            <div class="bg-slate-50 dark:bg-[#0d1322] p-2.5 rounded-2xl border border-slate-200 dark:border-indigo-900/40">
+              <span class="text-[10px] text-slate-500 dark:text-indigo-300/60 block font-medium">Future</span>
+              <span id="resFutureCount" class="text-sm font-bold text-slate-800 dark:text-white">0</span>
+            </div>
+            <div class="bg-slate-50 dark:bg-[#0d1322] p-2.5 rounded-2xl border border-slate-200 dark:border-indigo-900/40">
+              <span class="text-[10px] text-slate-500 dark:text-indigo-300/60 block font-medium">Final Total</span>
+              <span id="resFinalTotal" class="text-sm font-bold text-slate-800 dark:text-white">0</span>
+            </div>
+            <div class="bg-slate-50 dark:bg-[#0d1322] p-2.5 rounded-2xl border border-slate-200 dark:border-indigo-900/40">
+              <span class="text-[10px] text-slate-500 dark:text-indigo-300/60 block font-medium">Safe Bunks</span>
+              <span id="resAllowedBunks" class="text-sm font-bold text-emerald-600 dark:text-cyan-400">0</span>
+            </div>
+          </div>
+
         </div>
-      </div>
 
-      <div>
-        <label class="block text-xs font-semibold text-slate-400 mb-1">Classes Last Date (End Date)</label>
-        <input type="date" id="endDate"
-          class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500">
-      </div>
-    </div>
+        <!-- Strategy Box & Skip Dates Container -->
+        <div id="reportCard" class="bg-white dark:bg-[#111827]/80 border border-slate-200 dark:border-indigo-950/60 p-6 rounded-3xl shadow-lg dark:shadow-2xl space-y-4 backdrop-blur-md flex-1 transition-colors duration-300">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-slate-800 dark:text-indigo-200 flex items-center gap-2">
+              <i class="fa-solid fa-plane-departure text-cyan-400"></i>
+              <span>Suggested Bunk Dates</span>
+            </h3>
+          </div>
 
-    <!-- Output Section: Bunk Report -->
-    <div id="reportCard" class="hidden bg-slate-800 p-6 rounded-2xl shadow-xl border border-blue-500/30 space-y-4">
-      <h2 class="text-lg font-bold text-blue-400 border-b border-slate-700 pb-2">🎯 Smart Bunk Results</h2>
+          <div id="bunkAlertBox"></div>
 
-      <div class="grid grid-cols-3 gap-2 text-center">
-        <div class="bg-slate-900 p-3 rounded-xl border border-slate-700">
-          <span class="text-[10px] sm:text-xs text-slate-400 block">Remaining Classes</span>
-          <p id="resFutureCount" class="text-base sm:text-lg font-bold text-slate-200">0</p>
+          <div id="datesListContainer" class="hidden">
+            <div id="datesList" class="max-h-56 overflow-y-auto space-y-2 pr-1"></div>
+          </div>
         </div>
-        <div class="bg-slate-900 p-3 rounded-xl border border-slate-700">
-          <span class="text-[10px] sm:text-xs text-slate-400 block">Final Total</span>
-          <p id="resFinalTotal" class="text-base sm:text-lg font-bold text-slate-200">0</p>
-        </div>
-        <div class="bg-slate-900 p-3 rounded-xl border border-slate-700">
-          <span class="text-[10px] sm:text-xs text-slate-400 block">Allowed Bunks</span>
-          <p id="resAllowedBunks" class="text-base sm:text-lg font-bold text-green-400">0</p>
-        </div>
+
       </div>
 
-      <div id="bunkAlertBox"></div>
-
-      <div id="datesListContainer" class="hidden space-y-2">
-        <h3 class="text-xs font-semibold text-slate-300">Kon-Kon se din skip kar sakte ho:</h3>
-        <div id="datesList" class="max-h-52 overflow-y-auto space-y-1.5 pr-1"></div>
-      </div>
     </div>
 
   </div>
 
-  <!-- JavaScript Code -->
+  <!-- JavaScript Engine -->
   <script>
+    // Theme Switcher
+    const htmlEl = document.documentElement;
+    const themeIcon = document.getElementById('themeIcon');
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+
+    if (savedTheme === 'light') {
+      htmlEl.classList.remove('dark');
+      themeIcon.className = 'fa-solid fa-sun text-lg text-amber-500';
+    } else {
+      htmlEl.classList.add('dark');
+      themeIcon.className = 'fa-solid fa-moon text-lg text-amber-400';
+    }
+
+    function toggleTheme() {
+      if (htmlEl.classList.contains('dark')) {
+        htmlEl.classList.remove('dark');
+        themeIcon.className = 'fa-solid fa-sun text-lg text-amber-500';
+        localStorage.setItem('theme', 'light');
+      } else {
+        htmlEl.classList.add('dark');
+        themeIcon.className = 'fa-solid fa-moon text-lg text-amber-400';
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    // Weekly Schedule State Store
+    const scheduleState = {
+      1: 0, // Mon
+      2: 1, // Tue
+      3: 0, // Wed
+      4: 1, // Thu
+      5: 1, // Fri
+      6: 1, // Sat
+      0: 0  // Sun
+    };
+
+    function updateScheduleUI() {
+      for (let day = 0; day <= 6; day++) {
+        const cnt = scheduleState[day];
+        const card = document.getElementById(`day-card-${day}`);
+        const badge = document.getElementById(`day-badge-${day}`);
+        const cntEl = document.getElementById(`day-cnt-${day}`);
+
+        cntEl.innerText = cnt;
+
+        if (cnt > 0) {
+          card.className = "cursor-pointer flex flex-col items-center justify-between p-2 rounded-2xl border-2 border-cyan-500/80 bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 transition-all select-none shadow-lg shadow-cyan-500/10";
+          badge.className = "my-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-gradient-to-r from-cyan-500 to-indigo-500 text-white shadow-sm";
+          badge.innerText = `${cnt} CLS`;
+        } else {
+          card.className = "cursor-pointer flex flex-col items-center justify-between p-2 rounded-2xl border border-slate-200 dark:border-indigo-950/80 bg-slate-50 dark:bg-[#0d1322] transition-all select-none hover:border-cyan-500/50";
+          badge.className = "my-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-slate-200 dark:bg-[#1a2337] text-slate-500 dark:text-slate-400";
+          badge.innerText = "OFF";
+        }
+      }
+      calculatePlanner();
+    }
+
+    function toggleDayCard(day) {
+      scheduleState[day] = scheduleState[day] > 0 ? 0 : 1;
+      updateScheduleUI();
+    }
+
+    function adjustClassCount(day, delta) {
+      scheduleState[day] = Math.max(0, scheduleState[day] + delta);
+      updateScheduleUI();
+    }
+
+    function setPreset(type) {
+      for (let i = 0; i <= 6; i++) scheduleState[i] = 0;
+      if (type === 'mon-fri') {
+        for (let i = 1; i <= 5; i++) scheduleState[i] = 1;
+      } else if (type === 'mon-sat') {
+        for (let i = 1; i <= 6; i++) scheduleState[i] = 1;
+      }
+      updateScheduleUI();
+    }
+
+    // Input Elements
     const attendedEl = document.getElementById('attended');
     const totalEl = document.getElementById('total');
     const targetPctEl = document.getElementById('targetPct');
-    const endDateEl = document.getElementById('endDate');
-    const dayCheckboxes = document.querySelectorAll('.day-check');
+    const manualDateInput = document.getElementById('manualDateInput');
+    const nativeDatePicker = document.getElementById('nativeDatePicker');
 
+    nativeDatePicker.addEventListener('change', () => {
+      if (nativeDatePicker.value) {
+        const [yyyy, mm, dd] = nativeDatePicker.value.split('-');
+        manualDateInput.value = `${dd}-${mm}-${yyyy}`;
+        calculatePlanner();
+      }
+    });
+
+    function parseManualDate(inputStr) {
+      if (!inputStr) return null;
+      const parts = inputStr.trim().split(/[-/.]/);
+      if (parts.length !== 3) return null;
+
+      let d, m, y;
+      if (parts[0].length === 4) {
+        y = parseInt(parts[0]); m = parseInt(parts[1]) - 1; d = parseInt(parts[2]);
+      } else {
+        d = parseInt(parts[0]); m = parseInt(parts[1]) - 1; y = parseInt(parts[2]);
+      }
+
+      const dateObj = new Date(y, m, d);
+      if (isNaN(dateObj.getTime())) return null;
+      return dateObj;
+    }
+
+    // Gauge & Display Elements
     const currentPctDisplay = document.getElementById('currentPctDisplay');
-    const reportCard = document.getElementById('reportCard');
+    const progressCircle = document.getElementById('progressCircle');
+    const badgeDisplay = document.getElementById('badgeDisplay');
+    const targetBar = document.getElementById('targetBar');
+    const targetGapText = document.getElementById('targetGapText');
+
     const resFutureCount = document.getElementById('resFutureCount');
     const resFinalTotal = document.getElementById('resFinalTotal');
     const resAllowedBunks = document.getElementById('resAllowedBunks');
@@ -138,58 +439,94 @@
     const datesListContainer = document.getElementById('datesListContainer');
     const datesList = document.getElementById('datesList');
 
+    const CIRCUMFERENCE = 2 * Math.PI * 76; // ~477.5
+
+    function setCirclePercentage(percent, isSafe) {
+      const clampedPct = Math.min(Math.max(percent, 0), 100);
+      const offset = CIRCUMFERENCE - (clampedPct / 100) * CIRCUMFERENCE;
+      progressCircle.style.strokeDashoffset = offset;
+
+      if (isSafe) {
+        progressCircle.setAttribute("stroke", "url(#safeGradient)");
+        progressCircle.className = "transition-all duration-700 ease-out glow-safe";
+      } else {
+        progressCircle.setAttribute("stroke", "url(#dangerGradient)");
+        progressCircle.className = "transition-all duration-700 ease-out glow-danger";
+      }
+    }
+
     function calculatePlanner() {
       const att = Math.max(0, parseInt(attendedEl.value) || 0);
       const tot = Math.max(0, parseInt(totalEl.value) || 0);
       const target = Math.max(1, parseInt(targetPctEl.value) || 75);
 
-      // 1. Current Percentage
       if (tot > 0) {
-        const currPct = ((att / tot) * 100).toFixed(2);
+        const currPct = parseFloat(((att / tot) * 100).toFixed(2));
         currentPctDisplay.innerText = currPct + "%";
-        currentPctDisplay.className = currPct >= target ? "text-xl font-black text-green-400" : "text-xl font-black text-red-400";
+        
+        const isSafe = currPct >= target;
+        setCirclePercentage(currPct, isSafe);
+
+        targetBar.style.width = `${Math.min(currPct, 100)}%`;
+        targetGapText.innerText = `Current: ${currPct}% / Target: ${target}%`;
+
+        if (isSafe) {
+          badgeDisplay.className = "text-[11px] px-2.5 py-1 rounded-full font-bold bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 shadow-sm";
+          badgeDisplay.innerText = "Safe Zone";
+        } else {
+          badgeDisplay.className = "text-[11px] px-2.5 py-1 rounded-full font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30 shadow-sm";
+          badgeDisplay.innerText = "Shortage";
+        }
       } else {
-        currentPctDisplay.innerText = "0.00%";
+        currentPctDisplay.innerText = "0%";
+        targetBar.style.width = "0%";
+        setCirclePercentage(0, true);
       }
 
-      // 2. Schedule Calculation
-      const endDateVal = endDateEl.value;
-      if (!endDateVal) {
-        reportCard.classList.add('hidden');
+      const targetEnd = parseManualDate(manualDateInput.value);
+      if (!targetEnd) {
+        resFutureCount.innerText = "0";
+        resFinalTotal.innerText = tot;
+        resAllowedBunks.innerText = "0";
+        bunkAlertBox.innerHTML = `
+          <div class="text-xs text-slate-500 dark:text-indigo-300/50 text-center py-6 border border-dashed border-slate-200 dark:border-indigo-900/40 rounded-2xl">
+            Type or pick a valid Last Date (e.g. 30-11-2026) to see safe bunk dates.
+          </div>
+        `;
+        datesListContainer.classList.add('hidden');
         return;
       }
 
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-
-      const targetEnd = new Date(endDateVal);
       targetEnd.setHours(0, 0, 0, 0);
 
-      if (isNaN(targetEnd.getTime()) || targetEnd <= today) {
-        reportCard.classList.add('hidden');
+      if (targetEnd <= today) {
+        bunkAlertBox.innerHTML = `
+          <div class="text-xs text-rose-500 bg-rose-500/10 border border-rose-500/20 p-3 rounded-xl text-center">
+            Please enter a future date!
+          </div>
+        `;
+        datesListContainer.classList.add('hidden');
         return;
       }
-
-      // Active days selected
-      const selectedDays = [];
-      dayCheckboxes.forEach(cb => {
-        if (cb.checked) selectedDays.push(parseInt(cb.value));
-      });
 
       let futureClassesCount = 0;
       const upcomingDates = [];
 
       let currIter = new Date(today);
-      currIter.setDate(currIter.getDate() + 1); // start from tomorrow
+      currIter.setDate(currIter.getDate() + 1);
 
       while (currIter <= targetEnd) {
-        const dayIdx = currIter.getDay(); // 0=Sun, 1=Mon, etc.
+        const dayIdx = currIter.getDay();
+        const classesToday = scheduleState[dayIdx] || 0;
 
-        if (selectedDays.includes(dayIdx)) {
-          futureClassesCount++;
+        if (classesToday > 0) {
+          futureClassesCount += classesToday;
           upcomingDates.push({
             dateStr: currIter.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
-            dayName: currIter.toLocaleDateString('en-IN', { weekday: 'short' })
+            dayName: currIter.toLocaleDateString('en-IN', { weekday: 'short' }),
+            count: classesToday
           });
         }
         currIter.setDate(currIter.getDate() + 1);
@@ -200,56 +537,74 @@
       const maxAttendedPossible = att + futureClassesCount;
       const maxBunksAllowed = maxAttendedPossible - requiredAttended;
 
-      reportCard.classList.remove('hidden');
       resFutureCount.innerText = futureClassesCount;
       resFinalTotal.innerText = finalTotalClasses;
 
       if (maxBunksAllowed < 0) {
         resAllowedBunks.innerText = "0";
-        resAllowedBunks.className = "text-base sm:text-lg font-bold text-red-400";
+        resAllowedBunks.className = "text-sm font-bold text-rose-500";
         bunkAlertBox.innerHTML = `
-          <div class="bg-red-500/10 border border-red-500/30 p-3 rounded-xl text-red-300 text-xs sm:text-sm">
-            ⚠️ <strong>Alert:</strong> Aap target ${target}% maintain nahi kar payenge agar ek bhi class skip ki! Aapko at least ${Math.abs(maxBunksAllowed)} aur classes attend karni padengi.
+          <div class="bg-rose-500/10 border border-rose-500/20 p-4 rounded-2xl text-rose-600 dark:text-rose-300 text-xs leading-relaxed">
+            ⚠️ <strong>Critical Shortage:</strong> ${target}% reach karne ke liye aapko total <strong>${Math.abs(maxBunksAllowed)}</strong> aur extra classes attend karni hongi!
           </div>
         `;
         datesListContainer.classList.add('hidden');
       } else {
         resAllowedBunks.innerText = maxBunksAllowed;
-        resAllowedBunks.className = "text-base sm:text-lg font-bold text-green-400";
-        bunkAlertBox.innerHTML = `
-          <div class="bg-green-500/10 border border-green-500/30 p-3 rounded-xl text-green-300 text-xs sm:text-sm">
-            🎉 Aap end date tak Total <strong>${maxBunksAllowed}</strong> classes skip kar sakte hain!
-          </div>
-        `;
-
-        // Render specific skip dates
-        datesList.innerHTML = '';
-        const datesToSkip = upcomingDates.slice(0, maxBunksAllowed);
-
-        if (datesToSkip.length > 0) {
-          datesToSkip.forEach(item => {
-            const row = document.createElement('div');
-            row.className = 'flex justify-between items-center bg-slate-900 px-3 py-2 rounded-lg border border-slate-700/60 text-xs';
-            row.innerHTML = `
-              <span class="font-semibold text-slate-200">${item.dateStr} (${item.dayName})</span>
-              <span class="bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded font-medium">Safe to Skip</span>
-            `;
-            datesList.appendChild(row);
-          });
-          datesListContainer.classList.remove('hidden');
-        } else {
+        resAllowedBunks.className = "text-sm font-bold text-emerald-600 dark:text-cyan-400";
+        
+        if (maxBunksAllowed === 0) {
+          bunkAlertBox.innerHTML = `
+            <div class="bg-amber-500/10 border border-amber-500/20 p-3 rounded-2xl text-amber-600 dark:text-amber-300 text-xs">
+              ⚠️ Aap exact ${target}% boundary par hain. Ek bhi class bunk nahi ki ja sakti!
+            </div>
+          `;
           datesListContainer.classList.add('hidden');
+        } else {
+          bunkAlertBox.innerHTML = `
+            <div class="bg-cyan-500/10 border border-cyan-500/30 p-3.5 rounded-2xl text-cyan-700 dark:text-cyan-300 text-xs flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-cyan-400 text-base"></i>
+              <span>Total <strong>${maxBunksAllowed}</strong> safe bunks remaining till semester end!</span>
+            </div>
+          `;
+
+          datesList.innerHTML = '';
+          let remainingQuota = maxBunksAllowed;
+
+          for (const item of upcomingDates) {
+            if (remainingQuota >= item.count) {
+              remainingQuota -= item.count;
+              const card = document.createElement('div');
+              card.className = 'flex justify-between items-center bg-slate-50 dark:bg-[#0d1322] px-4 py-2.5 rounded-xl border border-slate-200 dark:border-indigo-950 text-xs transition-all hover:border-cyan-500/40';
+              card.innerHTML = `
+                <div class="flex items-center gap-2.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-sm shadow-cyan-400"></span>
+                  <span class="font-bold text-slate-800 dark:text-indigo-100">${item.dateStr}</span>
+                  <span class="text-[10px] text-slate-500 dark:text-indigo-300/50 font-medium">(${item.dayName})</span>
+                </div>
+                <span class="bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 px-2.5 py-1 rounded-lg text-[10px] font-bold">
+                  Skip ${item.count} class(es)
+                </span>
+              `;
+              datesList.appendChild(card);
+            }
+          }
+
+          if (datesList.children.length > 0) {
+            datesListContainer.classList.remove('hidden');
+          } else {
+            datesListContainer.classList.add('hidden');
+          }
         }
       }
     }
 
     // Attach Event Listeners
-    document.querySelectorAll('input').forEach(input => {
+    [attendedEl, totalEl, targetPctEl, manualDateInput].forEach(input => {
       input.addEventListener('input', calculatePlanner);
-      input.addEventListener('change', calculatePlanner);
     });
 
-    calculatePlanner();
+    updateScheduleUI();
   </script>
 </body>
 </html>
