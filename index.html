@@ -4,1165 +4,1038 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VIT-AP Academic Tracker & StudentLife Planner</title>
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Google Font: Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
+          colors: {
+            darkBg: '#0b0f19',
+            cardBg: '#111827',
+            cardBorder: 'rgba(255, 255, 255, 0.08)',
+            accentBlue: '#6366f1',
+            accentCyan: '#06b6d4'
           }
         }
       }
-    };
+    }
   </script>
-</head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen pb-20 md:pb-10 selection:bg-indigo-500 selection:text-white">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    /* Dark Theme (Default) */
+    html.dark body {
+      background-color: #0b0f19;
+      color: #f1f5f9;
+    }
+    html.dark .glass-card {
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1rem;
+    }
+    html.dark header {
+      background-color: rgba(11, 15, 25, 0.9);
+      border-color: rgba(30, 41, 59, 0.8);
+    }
 
-  <!-- Top Navigation Header -->
-  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/20">
-          <i class="fa-solid fa-graduation-cap"></i>
+    /* Light Theme Styling Overrides */
+    html:not(.dark) body {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+    }
+    html:not(.dark) .glass-card {
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+    }
+    html:not(.dark) header {
+      background-color: rgba(255, 255, 255, 0.95) !important;
+      border-color: #e2e8f0 !important;
+    }
+    html:not(.dark) .text-white {
+      color: #0f172a !important;
+    }
+    html:not(.dark) .text-slate-400, 
+    html:not(.dark) .text-slate-500 {
+      color: #64748b !important;
+    }
+    html:not(.dark) .text-slate-300 {
+      color: #334155 !important;
+    }
+    html:not(.dark) .bg-slate-900, 
+    html:not(.dark) .bg-slate-900\/60, 
+    html:not(.dark) .bg-slate-900\/80 {
+      background-color: #f1f5f9 !important;
+      border-color: #cbd5e1 !important;
+    }
+    html:not(.dark) .border-slate-800, 
+    html:not(.dark) .border-slate-800\/80, 
+    html:not(.dark) .border-slate-800\/60 {
+      border-color: #e2e8f0 !important;
+    }
+    html:not(.dark) input, 
+    html:not(.dark) select {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    html:not(.dark) table tr {
+      border-color: #e2e8f0 !important;
+    }
+    html:not(.dark) .bg-slate-800,
+    html:not(.dark) .bg-slate-800\/80 {
+      background-color: #e2e8f0 !important;
+      color: #1e293b !important;
+    }
+
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  </style>
+</head>
+<body class="min-h-screen pb-16 custom-scroll">
+
+  <!-- DATALIST FOR VIT-AP COURSE CODES -->
+  <datalist id="vitApCourseList"></datalist>
+
+  <!-- TOP NAVBAR -->
+  <header class="border-b sticky top-0 z-50 backdrop-blur-md px-4 sm:px-8 py-3.5 transition-colors">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+          <i class="fa-solid fa-graduation-cap text-lg"></i>
         </div>
         <div>
-          <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white leading-tight">VIT-AP Tracker</h1>
-          <p class="text-[11px] text-slate-400">Academic & Attendance Companion</p>
+          <h1 class="font-extrabold text-base sm:text-lg text-white tracking-tight leading-none">VIT-AP Academic Tracker</h1>
+          <p class="text-[11px] text-slate-400 font-medium pt-0.5">Student Life & Attendance Planner</p>
         </div>
       </div>
 
-      <!-- Desktop Navigation Tabs -->
-      <nav class="hidden md:flex items-center space-x-1 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800">
-        <button id="nav-dashboard" onclick="switchTab('dashboard')" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 bg-indigo-600 text-white shadow-md">
-          <i class="fa-solid fa-chart-pie text-xs"></i>
-          <span>Dashboard</span>
-        </button>
-        <button id="nav-cards" onclick="switchTab('cards')" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">
-          <i class="fa-solid fa-clone text-xs"></i>
-          <span>Subject Cards</span>
-        </button>
-        <button id="nav-timetable" onclick="switchTab('timetable')" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">
-          <i class="fa-regular fa-calendar-days text-xs"></i>
-          <span>Timetable</span>
-        </button>
-        <button id="nav-outing" onclick="switchTab('outing')" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">
-          <i class="fa-solid fa-plane-departure text-xs"></i>
-          <span>Outing Planner</span>
-        </button>
-      </nav>
+      <div class="flex items-center gap-3">
+        <!-- NAVIGATION TABS -->
+        <nav class="flex items-center gap-1.5 overflow-x-auto custom-scroll py-1">
+          <button id="navTabDashboard" onclick="switchPage('dashboard')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all bg-indigo-600 text-white shadow-md shadow-indigo-600/30 whitespace-nowrap">
+            <i class="fa-solid fa-chart-pie mr-1.5"></i> Dashboard
+          </button>
+          <button id="navTabAttendance" onclick="switchPage('attendance')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all bg-slate-800/80 text-slate-400 hover:text-white whitespace-nowrap">
+            <i class="fa-solid fa-list-check mr-1.5"></i> Attendance Cards
+          </button>
+          <button id="navTabTimetable" onclick="switchPage('timetable')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all bg-slate-800/80 text-slate-400 hover:text-white whitespace-nowrap">
+            <i class="fa-solid fa-calendar-days mr-1.5"></i> Timetable
+          </button>
+          <button id="navTabOuting" onclick="switchPage('outing')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all bg-slate-800/80 text-slate-400 hover:text-white whitespace-nowrap">
+            <i class="fa-solid fa-compass mr-1.5"></i> Can I Go Out?
+          </button>
+        </nav>
 
-      <div class="flex items-center space-x-3">
-        <!-- Target Goal Input -->
-        <div class="flex items-center space-x-2 bg-slate-800/60 border border-slate-700/60 px-3 py-1.5 rounded-xl text-xs">
-          <span class="text-slate-400 font-medium hidden sm:inline">Target:</span>
-          <span id="targetDisplay" class="font-bold text-indigo-400">75%</span>
-          <input type="range" min="50" max="90" value="75" step="5" onchange="updateTarget(this.value)" class="w-16 accent-indigo-500 cursor-pointer">
-        </div>
-
-        <!-- Theme Toggle Button -->
-        <button onclick="toggleTheme()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors" title="Toggle Theme">
-          <i id="themeIcon" class="fa-solid fa-moon text-base"></i>
+        <!-- LIGHT / DARK MODE TOGGLE BUTTON (ICON ONLY) -->
+        <button id="themeToggleBtn" onclick="toggleTheme()" class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 hover:bg-amber-500/20 transition-all text-xs font-bold flex items-center justify-center shrink-0">
+          <i id="themeIcon" class="fa-solid fa-sun text-sm"></i>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Main Content Layout -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
+  <div class="max-w-7xl mx-auto px-4 sm:px-8 mt-6">
 
-    <!-- TAB 1: DASHBOARD VIEW -->
-    <section id="tab-dashboard-view" class="space-y-6">
+    <!-- PAGE 1: ACADEMIC DASHBOARD -->
+    <section id="pageDashboard" class="space-y-6">
       
-      <!-- Key Statistics Bar -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-sm relative overflow-hidden">
-          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Overall Attendance</div>
-          <div id="statOverallPct" class="text-3xl font-extrabold text-indigo-400 mt-2">0%</div>
-          <div id="statOverallDetail" class="text-xs text-slate-500 mt-1">0 / 0 Classes Attended</div>
-          <div class="absolute right-3 bottom-3 text-indigo-500/10 text-4xl font-black"><i class="fa-solid fa-chart-line"></i></div>
-        </div>
-
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-sm relative overflow-hidden">
-          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Courses</div>
-          <div id="statTotalSubjects" class="text-3xl font-extrabold text-slate-100 mt-2">0</div>
-          <div id="statSafeSubjects" class="text-xs text-emerald-400 mt-1">0 Subjects Safe</div>
-          <div class="absolute right-3 bottom-3 text-slate-500/10 text-4xl font-black"><i class="fa-solid fa-book-bookmark"></i></div>
-        </div>
-
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-sm relative overflow-hidden">
-          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Safe Bunks Left</div>
-          <div id="statTotalSafeBunks" class="text-3xl font-extrabold text-emerald-400 mt-2">0</div>
-          <div class="text-xs text-slate-500 mt-1">Across all safe courses</div>
-          <div class="absolute right-3 bottom-3 text-emerald-500/10 text-4xl font-black"><i class="fa-solid fa-shield-halved"></i></div>
-        </div>
-
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-sm relative overflow-hidden">
-          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Shortage Warning</div>
-          <div id="statShortageCount" class="text-3xl font-extrabold text-rose-400 mt-2">0</div>
-          <div class="text-xs text-slate-500 mt-1">Courses below threshold</div>
-          <div class="absolute right-3 bottom-3 text-rose-500/10 text-4xl font-black"><i class="fa-solid fa-triangle-exclamation"></i></div>
-        </div>
-      </div>
-
-      <!-- Main Dashboard Content Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <!-- Attendance Quick Action Table (2 Cols) -->
-        <div class="lg:col-span-2 bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
-          <div class="flex items-center justify-between">
+      <!-- DASHBOARD BANNER -->
+      <div class="glass-card p-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center">
+              <i class="fa-solid fa-chart-line text-lg"></i>
+            </div>
             <div>
-              <h2 class="text-base font-bold text-slate-100">Course Attendance Overview</h2>
-              <p class="text-xs text-slate-400">Quickly adjust attendance or manage registered courses</p>
+              <h2 class="text-xl font-bold text-white tracking-tight">Academic Attendance Dashboard</h2>
+              <p class="text-xs text-slate-400 font-medium">Type VIT-AP Course Code for auto subject mapping & bunk calculation</p>
             </div>
-            <div class="flex items-center space-x-2">
-              <button onclick="openAddSubjectModal()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition-all flex items-center space-x-1.5 shadow-md shadow-indigo-600/20">
-                <i class="fa-solid fa-plus text-xs"></i>
-                <span>Add Course</span>
-              </button>
-              <button onclick="resetAllAttendanceData()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl border border-slate-700 transition-all" title="Reset Default Data">
-                <i class="fa-solid fa-rotate-right text-xs"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Table Wrapper -->
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead class="text-slate-400 border-b border-slate-800 uppercase text-[10px] tracking-wider">
-                <tr>
-                  <th class="pb-3 font-semibold">Course</th>
-                  <th class="pb-3 text-center font-semibold">Attended / Total</th>
-                  <th class="pb-3 text-center font-semibold">% Percentage</th>
-                  <th class="pb-3 text-center font-semibold">Status / Buffer</th>
-                  <th class="pb-3 text-right font-semibold">Quick Mark</th>
-                </tr>
-              </thead>
-              <tbody id="subjectTableBody" class="divide-y divide-slate-800/60">
-                <!-- Dynamic subject rows inserted here -->
-              </tbody>
-            </table>
           </div>
         </div>
-
-        <!-- Bunk Simulator Panel (1 Col) -->
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-5 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center space-x-2 text-indigo-400">
-              <i class="fa-solid fa-calculator text-base"></i>
-              <h3 class="font-bold text-sm text-slate-100">Bunk Impact Simulator</h3>
-            </div>
-            <p class="text-xs text-slate-400 mt-1">Simulate upcoming absences or extra classes to see projected percentage.</p>
-
-            <div class="mt-4 space-y-3">
-              <div>
-                <label class="block text-[11px] font-semibold text-slate-400 mb-1">Select Subject</label>
-                <select id="simSubjectSelect" onchange="runBunkSimulation()" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 focus:border-indigo-500 focus:outline-none">
-                  <!-- Dynamic options -->
-                </select>
-              </div>
-
-              <!-- Controls -->
-              <div class="grid grid-cols-2 gap-3 pt-2">
-                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-center">
-                  <span class="block text-[10px] text-slate-400 uppercase font-semibold">Plan to Bunk</span>
-                  <div class="flex items-center justify-center space-x-3 mt-2">
-                    <button onclick="adjustSimMissed(-1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-sm flex items-center justify-center">-</button>
-                    <span id="simMissedVal" class="text-base font-extrabold text-rose-400">0</span>
-                    <button onclick="adjustSimMissed(1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-sm flex items-center justify-center">+</button>
-                  </div>
-                </div>
-
-                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-center">
-                  <span class="block text-[10px] text-slate-400 uppercase font-semibold">Plan to Attend</span>
-                  <div class="flex items-center justify-center space-x-3 mt-2">
-                    <button onclick="adjustSimAttended(-1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-sm flex items-center justify-center">-</button>
-                    <span id="simAttendedVal" class="text-base font-extrabold text-emerald-400">0</span>
-                    <button onclick="adjustSimAttended(1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-sm flex items-center justify-center">+</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Simulation Projection Result Box -->
-          <div class="bg-slate-950/80 border border-indigo-500/20 rounded-xl p-4 space-y-2">
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-slate-400">Current %:</span>
-              <span id="simCurrentPct" class="font-bold text-slate-200">0%</span>
-            </div>
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-slate-400">Projected %:</span>
-              <span id="simProjectedPct" class="font-extrabold text-indigo-400 text-sm">0%</span>
-            </div>
-            <p id="simAdviceText" class="text-[11px] mt-2 font-medium text-emerald-400"></p>
-          </div>
-        </div>
-
       </div>
+
+      <!-- 4 STAT CARDS GRID -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="glass-card p-5 flex items-center justify-between">
+          <div class="space-y-1">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">TOTAL SUBJECTS</span>
+            <div id="statTotalSubjects" class="text-3xl font-extrabold text-white">6</div>
+          </div>
+          <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-layer-group"></i>
+          </div>
+        </div>
+
+        <div class="glass-card p-5 flex items-center justify-between">
+          <div class="space-y-1">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">TOTAL CLASSES HELD</span>
+            <div id="statTotalHeld" class="text-3xl font-extrabold text-cyan-400">0 / 0</div>
+          </div>
+          <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-calendar-check"></i>
+          </div>
+        </div>
+
+        <div class="glass-card p-5 flex items-center justify-between">
+          <div class="space-y-1">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">OVERALL PERCENTAGE</span>
+            <div id="statOverallPct" class="text-3xl font-extrabold text-cyan-400">0.0%</div>
+          </div>
+          <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-percent"></i>
+          </div>
+        </div>
+
+        <div class="glass-card p-5 flex items-center justify-between">
+          <div class="space-y-1">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">TARGET GOAL</span>
+            <div id="statTargetGoal" class="text-3xl font-extrabold text-emerald-400">75%</div>
+          </div>
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-bullseye"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBJECT BUNK PLANNER & SIMULATOR -->
+      <div class="glass-card p-6 space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center">
+              <i class="fa-solid fa-calculator"></i>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-white">Subject Bunk Planner & Simulator</h3>
+              <p class="text-xs text-slate-400">Select a subject to test bunk limits & target scenarios</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <label class="text-xs font-bold text-slate-400">Select Subject:</label>
+            <select id="simSubjectSelect" onchange="onSimSubjectChange()" class="bg-slate-900 border border-slate-800 text-cyan-400 text-xs font-bold rounded-xl px-3 py-2 outline-none focus:border-cyan-500">
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-5 space-y-5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-400 uppercase">SELECTED SUBJECT</span>
+              <span id="simSelectedName" class="text-xs font-extrabold text-cyan-400">Subject-1</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-slate-900 border border-slate-800/80 rounded-xl p-4 text-center">
+                <span class="text-[10px] font-bold text-slate-500 uppercase">ATTENDED / TOTAL</span>
+                <div id="simAttendedTotalDisplay" class="text-xl font-extrabold text-white pt-1">0 / 0</div>
+              </div>
+
+              <div class="bg-slate-900 border border-slate-800/80 rounded-xl p-4 text-center">
+                <span class="text-[10px] font-bold text-slate-500 uppercase">CURRENT %</span>
+                <div id="simCurrentPctDisplay" class="text-xl font-extrabold text-cyan-400 pt-1">0.0%</div>
+              </div>
+            </div>
+
+            <div class="space-y-2 pt-2">
+              <div class="flex justify-between items-center text-xs">
+                <span class="font-bold text-slate-400">Target Attendance Goal</span>
+                <span id="simTargetVal" class="font-extrabold text-cyan-400">75%</span>
+              </div>
+              <input type="range" id="simTargetSlider" min="50" max="95" value="75" oninput="onTargetSliderChange(this.value)" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400">
+            </div>
+          </div>
+
+          <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-5 space-y-5 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-400 uppercase">BUNK ANALYSIS STATUS</span>
+                <span id="simStatusBadge" class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-slate-800 text-slate-400">No Classes Conducted</span>
+              </div>
+              <p id="simAnalysisText" class="text-xs text-slate-300 leading-relaxed font-medium">
+                Enter attended & total conducted classes in the table below. Target threshold set to 75%.
+              </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 pt-4 border-t border-slate-800/80">
+              <button onclick="simAdjust(+1, +1)" class="px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold transition-all">
+                + Attended (+1)
+              </button>
+              <button onclick="simAdjust(0, +1)" class="px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-400 text-xs font-bold transition-all">
+                × Bunked (+1)
+              </button>
+              <button onclick="simReset()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold ml-auto transition-all">
+                <i class="fa-solid fa-rotate-left mr-1"></i> Reset Subject
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBJECT WISE ATTENDANCE TABLE -->
+      <div class="glass-card p-6 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h3 class="text-base font-bold text-white">Subject Wise Attendance & Course Code Mapping</h3>
+            <p class="text-xs text-slate-400">Type course code (e.g., CSE2005, MAT1001) to auto-fill subject name</p>
+          </div>
+
+          <button onclick="addNewSubjectRow()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-plus"></i> Add Subject
+          </button>
+        </div>
+
+        <div class="overflow-x-auto custom-scroll">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-slate-800 text-slate-400 font-bold uppercase text-[10px] tracking-wider">
+                <th class="py-3 px-3">COURSE CODE</th>
+                <th class="py-3 px-3">SUBJECT NAME</th>
+                <th class="py-3 px-3 text-center">ATTENDED</th>
+                <th class="py-3 px-3 text-center">TOTAL HELD</th>
+                <th class="py-3 px-3 text-center">CURRENT %</th>
+                <th class="py-3 px-3 text-right">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="dashboardTableBody" class="divide-y divide-slate-800/60 font-medium">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </section>
 
-    <!-- TAB 2: SUBJECT CARDS VIEW -->
-    <section id="tab-cards-view" class="hidden space-y-6">
+    <!-- PAGE 2: ATTENDANCE CARDS -->
+    <section id="pageAttendance" class="space-y-6 hidden">
       <div class="flex items-center justify-between">
         <div>
-          <h2 class="text-lg font-bold text-slate-100">Detailed Subject Cards</h2>
-          <p class="text-xs text-slate-400">View progress bars and safe bunk counts for every enrolled course</p>
+          <h2 class="text-xl font-extrabold text-white">Manage Attendance Cards</h2>
+          <p class="text-xs text-slate-400">Detailed view with bunk & shortage recommendations.</p>
         </div>
-        <button onclick="openAddSubjectModal()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition-all shadow-md shadow-indigo-600/20">
-          + Add Course
+        <button onclick="addNewSubjectRow()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-md">
+          <i class="fa-solid fa-plus"></i> Add Subject
         </button>
       </div>
 
-      <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <!-- Dynamic Cards inserted here -->
+      <div id="attendanceCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       </div>
     </section>
 
-    <!-- TAB 3: TIMETABLE VIEW -->
-    <section id="tab-timetable-view" class="hidden space-y-6">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <!-- PAGE 3: TIMETABLE -->
+    <section id="pageTimetable" class="space-y-6 hidden max-w-4xl mx-auto">
+      <div class="glass-card p-6 space-y-5">
         <div>
-          <h2 class="text-lg font-bold text-slate-100">Class Timetable Manager</h2>
-          <p class="text-xs text-slate-400">Configure weekly schedule slots for automatic attendance calculations</p>
+          <h2 class="text-lg font-bold text-white">Weekly Timetable Manager</h2>
+          <p class="text-xs text-slate-400">Add regular Theory & Lab classes with preset VIT-AP durations.</p>
         </div>
 
-        <!-- Day Selector Tabs -->
-        <div class="flex items-center space-x-1 bg-slate-900 border border-slate-800 p-1 rounded-xl overflow-x-auto">
-          <button id="day-Mon" onclick="selectScheduleDay('Mon')" class="day-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition-all">Mon</button>
-          <button id="day-Tue" onclick="selectScheduleDay('Tue')" class="day-tab px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all">Tue</button>
-          <button id="day-Wed" onclick="selectScheduleDay('Wed')" class="day-tab px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all">Wed</button>
-          <button id="day-Thu" onclick="selectScheduleDay('Thu')" class="day-tab px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all">Thu</button>
-          <button id="day-Fri" onclick="selectScheduleDay('Fri')" class="day-tab px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all">Fri</button>
-          <button id="day-Sat" onclick="selectScheduleDay('Sat')" class="day-tab px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all">Sat</button>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <!-- Add Class Slot Form (1 Col) -->
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
-          <h3 class="font-bold text-sm text-slate-100 flex items-center space-x-2">
-            <i class="fa-solid fa-plus-circle text-indigo-400"></i>
-            <span>Add Class to <span id="selectedDayTitle" class="text-indigo-400">Monday</span></span>
-          </h3>
-
-          <!-- Standard Preset Slots -->
-          <div class="space-y-3">
+        <div class="space-y-4 pt-1">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <span class="block text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-2">Theory Slots (50 Mins)</span>
-              <div class="grid grid-cols-2 gap-1.5">
-                <button type="button" onclick="applyPresetSlot('08','00','AM','08','50','AM','Theory')" class="px-2 py-1.5 rounded bg-slate-950 hover:bg-slate-800 text-[11px] font-medium text-slate-300 border border-slate-800 text-left">08:00 - 08:50 AM</button>
-                <button type="button" onclick="applyPresetSlot('09','00','AM','09','50','AM','Theory')" class="px-2 py-1.5 rounded bg-slate-950 hover:bg-slate-800 text-[11px] font-medium text-slate-300 border border-slate-800 text-left">09:00 - 09:50 AM</button>
-                <button type="button" onclick="applyPresetSlot('10','00','AM','10','50','AM','Theory')" class="px-2 py-1.5 rounded bg-slate-950 hover:bg-slate-800 text-[11px] font-medium text-slate-300 border border-slate-800 text-left">10:00 - 10:50 AM</button>
-                <button type="button" onclick="applyPresetSlot('11','00','AM','11','50','AM','Theory')" class="px-2 py-1.5 rounded bg-slate-950 hover:bg-slate-800 text-[11px] font-medium text-slate-300 border border-slate-800 text-left">11:00 - 11:50 AM</button>
-                <button type="button" onclick="applyPresetSlot('12','00','PM','12','50','PM','Theory')" class="px-2 py-1.5 rounded bg-slate-950 hover:bg-slate-800 text-[11px] font-medium text-slate-300 border border-slate-800 text-left">12:00 - 12:50 PM</button>
-                <button type="button" onclick="applyPresetSlot('02','00','PM','02','50','PM','Theory')" class="px-2 py-1.5 rounded bg-slate-950 hover:bg-slate-800 text-[11px] font-medium text-slate-300 border border-slate-800 text-left">02:00 - 02:50 PM</button>
-                <button type="button" onclick="applyPresetSlot('03','00','PM','03','50','PM','Theory')" class="px-2 py-1.5 rounded bg-slate-950 hover:bg-slate-800 text-[11px] font-medium text-slate-300 border border-slate-800 text-left">03:00 - 03:50 PM</button>
-                <button type="button" onclick="applyPresetSlot('04','00','PM','04','50','PM','Theory')" class="px-2 py-1.5 rounded bg-slate-950 hover:bg-slate-800 text-[11px] font-medium text-slate-300 border border-slate-800 text-left">04:00 - 04:50 PM</button>
-                <button type="button" onclick="applyPresetSlot('05','00','PM','05','50','PM','Theory')" class="px-2 py-1.5 rounded bg-slate-950 hover:bg-slate-800 text-[11px] font-medium text-slate-300 border border-slate-800 text-left">05:00 - 05:50 PM</button>
-                <button type="button" onclick="applyPresetSlot('06','00','PM','06','50','PM','Theory')" class="px-2 py-1.5 rounded bg-indigo-950/60 hover:bg-indigo-900/60 text-[11px] font-semibold text-indigo-300 border border-indigo-500/30 text-left">06:00 - 06:50 PM</button>
-              </div>
-            </div>
-
-            <div>
-              <span class="block text-[10px] font-bold text-purple-400 uppercase tracking-wider mb-2">Lab Slots (1 Hr 40 Mins)</span>
-              <div class="grid grid-cols-2 gap-1.5">
-                <button type="button" onclick="applyPresetSlot('08','00','AM','09','40','AM','Lab')" class="px-2 py-1.5 rounded bg-purple-950/40 hover:bg-purple-900/40 text-[11px] font-medium text-purple-300 border border-purple-500/30 text-left">08:00 - 09:40 AM (L1+L2)</button>
-                <button type="button" onclick="applyPresetSlot('09','50','AM','11','30','AM','Lab')" class="px-2 py-1.5 rounded bg-purple-950/40 hover:bg-purple-900/40 text-[11px] font-medium text-purple-300 border border-purple-500/30 text-left">09:50 - 11:30 AM (L3+L4)</button>
-                <button type="button" onclick="applyPresetSlot('11','40','AM','01','10','PM','Lab')" class="px-2 py-1.5 rounded bg-purple-950/40 hover:bg-purple-900/40 text-[11px] font-medium text-purple-300 border border-purple-500/30 text-left">11:40 AM - 01:10 PM (L5+L6)</button>
-                <button type="button" onclick="applyPresetSlot('02','00','PM','03','40','PM','Lab')" class="px-2 py-1.5 rounded bg-purple-950/40 hover:bg-purple-900/40 text-[11px] font-medium text-purple-300 border border-purple-500/30 text-left">02:00 - 03:40 PM (L31+L32)</button>
-                <button type="button" onclick="applyPresetSlot('03','50','PM','05','30','PM','Lab')" class="px-2 py-1.5 rounded bg-purple-950/40 hover:bg-purple-900/40 text-[11px] font-medium text-purple-300 border border-purple-500/30 text-left">03:50 - 05:30 PM (L33+L34)</button>
-                <button type="button" onclick="applyPresetSlot('05','40','PM','07','20','PM','Lab')" class="px-2 py-1.5 rounded bg-purple-950/40 hover:bg-purple-900/40 text-[11px] font-medium text-purple-300 border border-purple-500/30 text-left">05:40 - 07:20 PM (L35+L36)</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="space-y-3 pt-2 border-t border-slate-800">
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Subject</label>
-              <select id="ttSubjectSelect" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 focus:border-indigo-500 focus:outline-none">
-                <!-- Dynamic options -->
+              <label class="block text-xs font-bold text-slate-400 mb-1">Day</label>
+              <select id="ttDayInput" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white font-bold outline-none focus:border-indigo-500">
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+                <option value="Sunday">Sunday</option>
               </select>
             </div>
 
+            <div>
+              <label class="block text-xs font-bold text-slate-400 mb-1">Subject</label>
+              <select id="ttSubjectSelect" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white font-bold outline-none focus:border-indigo-500">
+              </select>
+            </div>
+          </div>
+
+          <!-- TIME SELECTION WITH DROPDOWNS -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
             <!-- Start Time -->
-            <div class="grid grid-cols-3 gap-2">
-              <div>
-                <label class="block text-[10px] text-slate-400">Start Hr</label>
-                <input id="ttStartHour" type="text" value="08" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2 text-center">
-              </div>
-              <div>
-                <label class="block text-[10px] text-slate-400">Start Min</label>
-                <input id="ttStartMin" type="text" value="00" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2 text-center">
-              </div>
-              <div>
-                <label class="block text-[10px] text-slate-400">Period</label>
-                <select id="ttStartPeriod" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2 text-center">
-                  <option value="AM">AM</option>
+            <div class="space-y-1.5">
+              <label class="block text-xs font-bold text-slate-400">Start Time</label>
+              <div class="flex items-center gap-1">
+                <select id="ttStartHour" class="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-2 text-xs font-bold text-white outline-none focus:border-indigo-500">
+                  <option value="08">08</option>
+                  <option value="09" selected>09</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                  <option value="01">01</option>
+                  <option value="02">02</option>
+                  <option value="03">03</option>
+                  <option value="04">04</option>
+                  <option value="05">05</option>
+                  <option value="06">06</option>
+                  <option value="07">07</option>
+                </select>
+                <span class="text-slate-400 font-bold">:</span>
+                <select id="ttStartMin" class="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-2 text-xs font-bold text-white outline-none focus:border-indigo-500">
+                  <option value="00" selected>00</option>
+                  <option value="05">05</option>
+                  <option value="10">10</option>
+                  <option value="15">15</option>
+                  <option value="20">20</option>
+                  <option value="25">25</option>
+                  <option value="30">30</option>
+                  <option value="35">35</option>
+                  <option value="40">40</option>
+                  <option value="45">45</option>
+                  <option value="50">50</option>
+                  <option value="55">55</option>
+                </select>
+                <select id="ttStartAmpm" class="bg-slate-900 border border-slate-800 rounded-lg px-2 py-2 text-xs font-bold text-indigo-400 outline-none focus:border-indigo-500">
+                  <option value="AM" selected>AM</option>
                   <option value="PM">PM</option>
                 </select>
               </div>
             </div>
 
             <!-- End Time -->
-            <div class="grid grid-cols-3 gap-2">
-              <div>
-                <label class="block text-[10px] text-slate-400">End Hr</label>
-                <input id="ttEndHour" type="text" value="08" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2 text-center">
-              </div>
-              <div>
-                <label class="block text-[10px] text-slate-400">End Min</label>
-                <input id="ttEndMin" type="text" value="50" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2 text-center">
-              </div>
-              <div>
-                <label class="block text-[10px] text-slate-400">Period</label>
-                <select id="ttEndPeriod" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2 text-center">
-                  <option value="AM">AM</option>
+            <div class="space-y-1.5">
+              <label class="block text-xs font-bold text-slate-400">End Time</label>
+              <div class="flex items-center gap-1">
+                <select id="ttEndHour" class="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-2 text-xs font-bold text-white outline-none focus:border-indigo-500">
+                  <option value="08">08</option>
+                  <option value="09">09</option>
+                  <option value="10" selected>10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                  <option value="01">01</option>
+                  <option value="02">02</option>
+                  <option value="03">03</option>
+                  <option value="04">04</option>
+                  <option value="05">05</option>
+                  <option value="06">06</option>
+                  <option value="07">07</option>
+                </select>
+                <span class="text-slate-400 font-bold">:</span>
+                <select id="ttEndMin" class="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-2 text-xs font-bold text-white outline-none focus:border-indigo-500">
+                  <option value="00" selected>00</option>
+                  <option value="05">05</option>
+                  <option value="10">10</option>
+                  <option value="15">15</option>
+                  <option value="20">20</option>
+                  <option value="25">25</option>
+                  <option value="30">30</option>
+                  <option value="35">35</option>
+                  <option value="40">40</option>
+                  <option value="45">45</option>
+                  <option value="50">50</option>
+                  <option value="55">55</option>
+                </select>
+                <select id="ttEndAmpm" class="bg-slate-900 border border-slate-800 rounded-lg px-2 py-2 text-xs font-bold text-indigo-400 outline-none focus:border-indigo-500">
+                  <option value="AM" selected>AM</option>
                   <option value="PM">PM</option>
                 </select>
               </div>
             </div>
+          </div>
 
-            <!-- Venue and Type -->
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="block text-[10px] text-slate-400">Venue</label>
-                <input id="ttVenueInput" type="text" placeholder="AB1-304" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2">
-              </div>
-              <div>
-                <label class="block text-[10px] text-slate-400">Class Type</label>
-                <select id="ttTypeSelect" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2">
-                  <option value="Theory">Theory</option>
-                  <option value="Lab">Lab</option>
-                </select>
-              </div>
+          <!-- THEORY PRESET SLOTS (50 MINS) -->
+          <div class="space-y-1.5">
+            <span class="text-[11px] font-bold text-indigo-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-book-open"></i> Theory Slot Presets (50 Mins):
+            </span>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" onclick="setSlotPreset('08', '00', 'AM', '08', '50', 'AM')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-indigo-600/30 border border-slate-700 text-[11px] font-bold text-slate-300 transition-all">08:00 - 08:50 AM</button>
+              <button type="button" onclick="setSlotPreset('09', '00', 'AM', '09', '50', 'AM')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-indigo-600/30 border border-slate-700 text-[11px] font-bold text-slate-300 transition-all">09:00 - 09:50 AM</button>
+              <button type="button" onclick="setSlotPreset('10', '00', 'AM', '10', '50', 'AM')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-indigo-600/30 border border-slate-700 text-[11px] font-bold text-slate-300 transition-all">10:00 - 10:50 AM</button>
+              <button type="button" onclick="setSlotPreset('11', '00', 'AM', '11', '50', 'AM')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-indigo-600/30 border border-slate-700 text-[11px] font-bold text-slate-300 transition-all">11:00 - 11:50 AM</button>
+              <button type="button" onclick="setSlotPreset('12', '00', 'PM', '12', '50', 'PM')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-indigo-600/30 border border-slate-700 text-[11px] font-bold text-slate-300 transition-all">12:00 - 12:50 PM</button>
+              <button type="button" onclick="setSlotPreset('02', '00', 'PM', '02', '50', 'PM')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-indigo-600/30 border border-slate-700 text-[11px] font-bold text-slate-300 transition-all">02:00 - 02:50 PM</button>
+              <button type="button" onclick="setSlotPreset('03', '00', 'PM', '03', '50', 'PM')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-indigo-600/30 border border-slate-700 text-[11px] font-bold text-slate-300 transition-all">03:00 - 03:50 PM</button>
+              <button type="button" onclick="setSlotPreset('04', '00', 'PM', '04', '50', 'PM')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-indigo-600/30 border border-slate-700 text-[11px] font-bold text-slate-300 transition-all">04:00 - 04:50 PM</button>
+              <button type="button" onclick="setSlotPreset('05', '00', 'PM', '05', '50', 'PM')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-indigo-600/30 border border-slate-700 text-[11px] font-bold text-slate-300 transition-all">05:00 - 05:50 PM</button>
+              <button type="button" onclick="setSlotPreset('06', '00', 'PM', '06', '50', 'PM')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-indigo-600/30 border border-slate-700 text-[11px] font-bold text-slate-300 transition-all">06:00 - 06:50 PM</button>
             </div>
-
-            <button onclick="addScheduleItem()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl transition-all shadow-md shadow-indigo-600/20">
-              Add Slot to Timetable
-            </button>
           </div>
+
+          <!-- LAB PRESET SLOTS (1 HR 40 MINS & SPECIAL 11:40 SLOT) -->
+          <div class="space-y-1.5 pt-1">
+            <span class="text-[11px] font-bold text-cyan-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-vial"></i> Lab Slot Presets (1 Hr 40 Mins):
+            </span>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" onclick="setSlotPreset('08', '00', 'AM', '09', '40', 'AM')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-cyan-600/30 border border-slate-700 text-[11px] font-bold text-slate-300 transition-all">08:00 - 09:40 AM</button>
+              <button type="button" onclick="setSlotPreset('10', '00', 'AM', '11', '40', 'AM')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-cyan-600/30 border border-slate-700 text-[11px] font-bold text-slate-300 transition-all">10:00 - 11:40 AM</button>
+              <button type="button" onclick="setSlotPreset('11', '40', 'AM', '01', '10', 'PM')" class="px-2.5 py-1 rounded-lg bg-cyan-900/50 hover:bg-cyan-600/40 border border-cyan-500/50 text-[11px] font-bold text-cyan-300 transition-all">11:40 AM - 01:10 PM ★</button>
+              <button type="button" onclick="setSlotPreset('02', '00', 'PM', '03', '40', 'PM')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-cyan-600/30 border border-slate-700 text-[11px] font-bold text-slate-300 transition-all">02:00 - 03:40 PM</button>
+              <button type="button" onclick="setSlotPreset('04', '00', 'PM', '05', '40', 'PM')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-cyan-600/30 border border-slate-700 text-[11px] font-bold text-slate-300 transition-all">04:00 - 05:40 PM</button>
+              <button type="button" onclick="setSlotPreset('06', '00', 'PM', '07', '40', 'PM')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-cyan-600/30 border border-slate-700 text-[11px] font-bold text-slate-300 transition-all">06:00 - 07:40 PM</button>
+            </div>
+          </div>
+
+          <button onclick="addTimetableClass()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md transition-all">
+            + Add Class to Schedule
+          </button>
         </div>
-
-        <!-- Daily Schedule List (2 Cols) -->
-        <div class="lg:col-span-2 bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
-          <div class="flex items-center justify-between">
-            <h3 class="font-bold text-sm text-slate-100 flex items-center space-x-2">
-              <i class="fa-regular fa-clock text-indigo-400"></i>
-              <span>Scheduled Classes for <span id="activeDayBadge" class="text-indigo-400">Monday</span></span>
-            </h3>
-            <span id="dayClassCount" class="text-xs bg-slate-800 text-slate-300 border border-slate-700 px-2.5 py-1 rounded-lg">0 Classes</span>
-          </div>
-
-          <div id="timetableList" class="space-y-3">
-            <!-- Dynamic timetable entries -->
-          </div>
-        </div>
-
       </div>
-    </section>
 
-    <!-- TAB 4: OUTING PLANNER VIEW -->
-    <section id="tab-outing-view" class="hidden space-y-6">
-      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-5">
-        <div>
-          <h2 class="text-lg font-bold text-slate-100">Outing & Holiday Attendance Planner</h2>
-          <p class="text-xs text-slate-400">Select proposed trip dates to instantly calculate how missed classes will impact your threshold.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end bg-slate-950 p-4 rounded-xl border border-slate-800">
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Start Date</label>
-            <input type="date" id="outingStartDate" class="w-full bg-slate-900 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 focus:border-indigo-500 focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">End Date</label>
-            <input type="date" id="outingEndDate" class="w-full bg-slate-900 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 focus:border-indigo-500 focus:outline-none">
-          </div>
-          <div>
-            <button onclick="calculateOutingImpact()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl transition-all shadow-md shadow-indigo-600/20 flex items-center justify-center space-x-2">
-              <i class="fa-solid fa-calculator text-xs"></i>
-              <span>Calculate Impact</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Result Verdict Card -->
-        <div id="outingResultCard" class="hidden space-y-4 pt-2">
-          <div id="verdictBanner" class="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border">
-            <div class="flex items-center space-x-3">
-              <div id="verdictIcon"></div>
-              <div>
-                <h4 id="verdictTitle" class="font-extrabold text-base"></h4>
-                <p id="verdictSubtitle" class="text-xs text-slate-400 mt-0.5"></p>
-              </div>
-            </div>
-            <div class="mt-3 sm:mt-0 text-right">
-              <span class="text-xs text-slate-400 block">Total Missed Classes</span>
-              <span id="totalMissedInOuting" class="text-2xl font-black text-amber-400">0</span>
-            </div>
-          </div>
-
-          <!-- Detailed Impact Breakdown Table -->
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead class="text-slate-400 border-b border-slate-800 uppercase text-[10px] tracking-wider">
-                <tr>
-                  <th class="pb-2">Course</th>
-                  <th class="pb-2 text-center">Classes Missed</th>
-                  <th class="pb-2 text-center">Current %</th>
-                  <th class="pb-2 text-center">Projected %</th>
-                  <th class="pb-2 text-right">Status</th>
-                </tr>
-              </thead>
-              <tbody id="outingBreakdownBody" class="divide-y divide-slate-800/60">
-                <!-- Dynamic breakdown rows -->
-              </tbody>
-            </table>
-          </div>
+      <div class="glass-card p-6 space-y-4">
+        <h3 class="text-sm font-bold text-white">Your Weekly Schedule</h3>
+        <div id="timetableDisplayList" class="space-y-2.5">
         </div>
       </div>
     </section>
 
-  </main>
-
-  <!-- Mobile Bottom Navigation Bar -->
-  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 px-2 py-1.5 flex items-center justify-around">
-    <button id="mnav-dashboard" onclick="switchTab('dashboard')" class="mobile-tab text-center px-3 py-1.5 rounded-lg text-xs font-medium text-indigo-400 flex flex-col items-center">
-      <i class="fa-solid fa-chart-pie text-base mb-0.5"></i>
-      <span>Dash</span>
-    </button>
-    <button id="mnav-cards" onclick="switchTab('cards')" class="mobile-tab text-center px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 flex flex-col items-center">
-      <i class="fa-solid fa-clone text-base mb-0.5"></i>
-      <span>Cards</span>
-    </button>
-    <button id="mnav-timetable" onclick="switchTab('timetable')" class="mobile-tab text-center px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 flex flex-col items-center">
-      <i class="fa-regular fa-calendar-days text-base mb-0.5"></i>
-      <span>Schedule</span>
-    </button>
-    <button id="mnav-outing" onclick="switchTab('outing')" class="mobile-tab text-center px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 flex flex-col items-center">
-      <i class="fa-solid fa-plane-departure text-base mb-0.5"></i>
-      <span>Outing</span>
-    </button>
-  </nav>
-
-  <!-- Subject Add/Edit Modal -->
-  <div id="subjectModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 relative shadow-2xl">
-      <div class="flex items-center justify-between">
-        <h3 id="modalTitle" class="font-bold text-base text-slate-100">Add New Subject</h3>
-        <button onclick="closeAddSubjectModal()" class="text-slate-400 hover:text-slate-200">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-
-      <div class="space-y-3">
+    <!-- PAGE 4: CAN I GO OUT? -->
+    <section id="pageOuting" class="space-y-6 hidden max-w-3xl mx-auto">
+      <div class="glass-card p-6 space-y-4">
         <div>
-          <label class="block text-xs font-semibold text-slate-400 mb-1">Course Code</label>
-          <input id="modalSubCode" type="text" placeholder="e.g. CSE2005" oninput="autoFillSubjectName(this.value)" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 uppercase focus:border-indigo-500 focus:outline-none">
-          <span class="text-[10px] text-indigo-400 mt-1 block">💡 Course name auto-fills upon entering valid VIT-AP code</span>
+          <h2 class="text-lg font-bold text-white">Can I Go Out?</h2>
+          <p class="text-xs text-slate-400">See how your attendance changes if you miss classes on outing days.</p>
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-400 mb-1">Course Name</label>
-          <input id="modalSubName" type="text" placeholder="e.g. Operating Systems" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 focus:border-indigo-500 focus:outline-none">
+        <div class="space-y-3 pt-2">
+          <div>
+            <label class="block text-xs font-bold text-slate-400 mb-1">Outing Start Date</label>
+            <input type="date" id="outingStartDate" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white font-bold outline-none focus:border-indigo-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-400 mb-1">Return Date</label>
+            <input type="date" id="outingEndDate" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white font-bold outline-none focus:border-indigo-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-400 mb-1">Minimum Required Attendance %</label>
+            <input type="number" id="outingMinPct" value="75" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white font-bold outline-none focus:border-indigo-500">
+          </div>
+
+          <button onclick="checkOutingImpact()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md transition-all">
+            Calculate Outing Impact
+          </button>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Classes Attended</label>
-            <input id="modalAttended" type="number" min="0" value="0" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 focus:border-indigo-500 focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Total Classes Held</label>
-            <input id="modalTotal" type="number" min="0" value="0" class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl p-2.5 focus:border-indigo-500 focus:outline-none">
-          </div>
+        <div id="outingResultBox" class="hidden p-4 rounded-xl border space-y-2">
         </div>
       </div>
 
-      <div class="flex items-center space-x-2 pt-2">
-        <button onclick="closeAddSubjectModal()" class="w-1/2 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs rounded-xl transition-all">Cancel</button>
-        <button onclick="saveSubjectFromModal()" class="w-1/2 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl transition-all shadow-md shadow-indigo-600/20">Save Course</button>
+      <div class="glass-card p-6 space-y-3">
+        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-trophy text-amber-400"></i> Best Outing Days
+        </h3>
+        <div id="bestOutingDaysList" class="space-y-2 text-xs">
+        </div>
       </div>
-    </div>
+    </section>
+
   </div>
 
   <script>
-    // LocalStorage Keys
-    const STORAGE_KEY_SUBJECTS = 'vitap_tracker_subjects';
-    const STORAGE_KEY_TIMETABLE = 'vitap_tracker_timetable';
-    const STORAGE_KEY_TARGET = 'vitap_tracker_target';
-    const STORAGE_KEY_THEME = 'vitap_tracker_theme';
-
-    // Comprehensive VIT-AP Course Code Map
+    // VIT-AP EXTRACTED COURSE DATABASE
     const vitApCourseMap = {
-      'CSE2005': 'Operating Systems',
-      'MAT2001': 'Differential Equations and Transforms',
-      'CSE3002': 'Artificial Intelligence',
-      'ECE1003': 'Digital Logic Design',
-      'STS2001': 'Soft Skills for Engineers II',
-      'CSE1001': 'Problem Solving and Programming',
-      'CSE1002': 'Object Oriented Programming',
-      'MAT1001': 'Calculus for Engineers',
-      'PHY1008': 'Engineering Physics',
-      'CHY1002': 'Environmental Sciences',
-      'ENG1002': 'Technical Report Writing',
-      'CSE2001': 'Data Structures and Algorithms',
-      'CSE2002': 'Computer Organization and Architecture',
-      'CSE3001': 'Database Management Systems',
-      'CSE3003': 'Computer Networks',
-      'CSE4001': 'Software Engineering'
+      "CSE2005": "Object Oriented Programming using JAVA",
+      "PHY1008": "Modern Physics",
+      "CHY1009": "Chemistry and Environmental Studies",
+      "ENG1002": "English for Effective Communication",
+      "ENG2001": "English for Professional Communication",
+      "ECE1002": "Fundamentals of Electrical and Electronics Engineering",
+      "MAT1002": "Applications of Differential and Difference Equations",
+      "CSE1012": "Problem Solving using Python",
+      "ECE1003": "Digital Logic Design",
+      "ENG1001": "English for Essential Communication",
+      "MAT1001": "Calculus for Engineers",
+      "MGT1001": "Ethics and Values",
+      "CSE2001": "Data Structures and Algorithms",
+      "MAT1003": "Discrete Mathematical Structures",
+      "CSE3002": "Artificial Intelligence",
+      "ECE2002": "Computer Architecture and Organization",
+      "ECS2002": "Engineering Clinics - System Design",
+      "MGT1040": "Entrepreneurship",
+      "CSE2008": "Operating Systems",
+      "CSE2007": "Database Management Systems",
+      "CSE1005": "Software Engineering",
+      "CSE1022": "Introduction to Programming",
+      "SIT1001": "Summer Internship",
+      "ECS3002": "Engineering Clinics - Real Time System",
+      "CSE3003": "Computer Networks",
+      "CSE3004": "Design and Analysis of Algorithms",
+      "CSE2025": "AWS Solution Architect",
+      "CSE1008": "Theory of Computation",
+      "CAP4001": "Capstone",
+      "BIC4002": "Industrial Internship/ Senior Design Project"
     };
 
-    // Default Seed Data
-    const defaultSubjects = [
-      { id: 'sub-1', code: 'CSE2005', name: 'Operating Systems', attended: 22, total: 25 },
-      { id: 'sub-2', code: 'MAT2001', name: 'Differential Equations and Transforms', attended: 18, total: 24 },
-      { id: 'sub-3', code: 'CSE3002', name: 'Artificial Intelligence', attended: 20, total: 22 },
-      { id: 'sub-4', code: 'ECE1003', name: 'Digital Logic Design', attended: 14, total: 20 },
-      { id: 'sub-5', code: 'STS2001', name: 'Soft Skills for Engineers II', attended: 10, total: 10 }
+    let targetGoal = 75;
+    let subjects = [
+      { id: '1', code: 'CSE2005', name: 'Object Oriented Programming using JAVA', attended: 0, total: 0 },
+      { id: '2', code: 'CSE2001', name: 'Data Structures and Algorithms', attended: 0, total: 0 },
+      { id: '3', code: 'MAT1001', name: 'Calculus for Engineers', attended: 0, total: 0 },
+      { id: '4', code: 'PHY1008', name: 'Modern Physics', attended: 0, total: 0 },
+      { id: '5', code: 'CSE1012', name: 'Problem Solving using Python', attended: 0, total: 0 },
+      { id: '6', code: 'ECE1002', name: 'Fundamentals of Electrical and Electronics Engineering', attended: 0, total: 0 }
+    ];
+    let selectedSimId = '1';
+    let timetable = [
+      { id: 't1', day: 'Monday', subject: 'CSE2005 - JAVA', startTime: '09:00 AM', endTime: '09:50 AM' }
     ];
 
-    const defaultTimetable = [
-      { id: 'tt-1', day: 'Mon', subjectId: 'sub-1', startH: '08', startM: '00', startP: 'AM', endH: '08', endM: '50', endP: 'AM', venue: 'AB1-304', type: 'Theory' },
-      { id: 'tt-2', day: 'Mon', subjectId: 'sub-2', startH: '09', startM: '00', startP: 'AM', endH: '09', endM: '50', endP: 'AM', venue: 'AB1-201', type: 'Theory' },
-      { id: 'tt-3', day: 'Tue', subjectId: 'sub-3', startH: '10', startM: '00', startP: 'AM', endH: '10', endM: '50', endP: 'AM', venue: 'CB-102', type: 'Theory' },
-      { id: 'tt-4', day: 'Wed', subjectId: 'sub-4', startH: '02', startM: '00', startP: 'PM', endH: '03', endM: '40', endP: 'PM', venue: 'AB2-LAB1', type: 'Lab' },
-      { id: 'tt-5', day: 'Thu', subjectId: 'sub-1', startH: '04', startM: '00', startP: 'PM', endH: '04', endM: '50', endP: 'PM', venue: 'AB1-304', type: 'Theory' },
-      { id: 'tt-6', day: 'Fri', subjectId: 'sub-5', startH: '06', startM: '00', startP: 'PM', endH: '06', endM: '50', endP: 'PM', venue: 'CB-205', type: 'Theory' }
-    ];
-
-    let subjects = [];
-    let timetable = [];
-    let targetPct = 75;
-    let currentTab = 'dashboard';
-    let selectedDay = 'Mon';
-    let simMissedCount = 0;
-    let simAttendedCount = 0;
-    let editingSubjectId = null;
-
-    function loadData() {
-      try {
-        const sData = localStorage.getItem(STORAGE_KEY_SUBJECTS);
-        subjects = sData ? JSON.parse(sData) : [...defaultSubjects];
-
-        const tData = localStorage.getItem(STORAGE_KEY_TIMETABLE);
-        timetable = tData ? JSON.parse(tData) : [...defaultTimetable];
-
-        const tgtData = localStorage.getItem(STORAGE_KEY_TARGET);
-        if (tgtData) targetPct = parseInt(tgtData, 10) || 75;
-
-        const themeData = localStorage.getItem(STORAGE_KEY_THEME);
-        if (themeData === 'light') {
-          document.documentElement.classList.remove('dark');
-          document.getElementById('themeIcon').className = 'fa-solid fa-sun text-base';
-        } else {
-          document.documentElement.classList.add('dark');
-          document.getElementById('themeIcon').className = 'fa-solid fa-moon text-base';
-        }
-      } catch (e) {
-        subjects = [...defaultSubjects];
-        timetable = [...defaultTimetable];
-      }
-    }
-
-    function saveSubjects() {
-      localStorage.setItem(STORAGE_KEY_SUBJECTS, JSON.stringify(subjects));
-    }
-
-    function saveTimetable() {
-      localStorage.setItem(STORAGE_KEY_TIMETABLE, JSON.stringify(timetable));
-    }
-
-    function saveTarget() {
-      localStorage.setItem(STORAGE_KEY_TARGET, targetPct.toString());
-    }
-
-    function switchTab(tabId) {
-      currentTab = tabId;
-      const tabs = ['dashboard', 'cards', 'timetable', 'outing'];
-
-      tabs.forEach(t => {
-        const content = document.getElementById(`tab-${t}-view`);
-        if (content) {
-          if (t === tabId) {
-            content.classList.remove('hidden');
-          } else {
-            content.classList.add('hidden');
-          }
-        }
-
-        const navBtn = document.getElementById(`nav-${t}`);
-        if (navBtn) {
-          if (t === tabId) {
-            navBtn.className = 'tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 bg-indigo-600 text-white shadow-md';
-          } else {
-            navBtn.className = 'tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50';
-          }
-        }
-
-        const mNavBtn = document.getElementById(`mnav-${t}`);
-        if (mNavBtn) {
-          if (t === tabId) {
-            mNavBtn.className = 'mobile-tab text-center px-3 py-1.5 rounded-lg text-xs font-medium text-indigo-400 flex flex-col items-center';
-          } else {
-            mNavBtn.className = 'mobile-tab text-center px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 flex flex-col items-center';
-          }
-        }
-      });
-
+    function init() {
+      populateDatalist();
+      loadStoredTheme();
       renderAll();
+    }
+
+    function loadStoredTheme() {
+      const storedTheme = localStorage.getItem('theme');
+      const html = document.documentElement;
+      if (storedTheme === 'light') {
+        html.classList.remove('dark');
+        applyThemeUI(false);
+      } else {
+        html.classList.add('dark');
+        applyThemeUI(true);
+      }
     }
 
     function toggleTheme() {
-      const isDark = document.documentElement.classList.contains('dark');
-      if (isDark) {
-        document.documentElement.classList.remove('dark');
-        document.getElementById('themeIcon').className = 'fa-solid fa-sun text-base';
-        localStorage.setItem(STORAGE_KEY_THEME, 'light');
+      const html = document.documentElement;
+      const isCurrentlyDark = html.classList.contains('dark');
+      
+      if (isCurrentlyDark) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+        applyThemeUI(false);
       } else {
-        document.documentElement.classList.add('dark');
-        document.getElementById('themeIcon').className = 'fa-solid fa-moon text-base';
-        localStorage.setItem(STORAGE_KEY_THEME, 'dark');
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+        applyThemeUI(true);
       }
     }
 
-    function updateTarget(val) {
-      targetPct = parseInt(val, 10);
-      document.getElementById('targetDisplay').innerText = `${targetPct}%`;
-      saveTarget();
-      renderAll();
-    }
+    function applyThemeUI(isDark) {
+      const btnIcon = document.getElementById('themeIcon');
+      const btn = document.getElementById('themeToggleBtn');
 
-    function autoFillSubjectName(code) {
-      if (!code) return;
-      const cleanCode = code.trim().toUpperCase();
-      if (vitApCourseMap[cleanCode]) {
-        const nameInput = document.getElementById('modalSubName');
-        if (nameInput) {
-          nameInput.value = vitApCourseMap[cleanCode];
-        }
+      if (!isDark) {
+        if (btnIcon) btnIcon.className = 'fa-solid fa-moon text-indigo-600 text-sm';
+        if (btn) btn.className = 'w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-600 hover:bg-indigo-100 transition-all text-xs font-bold flex items-center justify-center shrink-0 shadow-sm';
+      } else {
+        if (btnIcon) btnIcon.className = 'fa-solid fa-sun text-amber-400 text-sm';
+        if (btn) btn.className = 'w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 hover:bg-amber-500/20 transition-all text-xs font-bold flex items-center justify-center shrink-0';
       }
     }
 
-    function getSubjectPct(attended, total) {
-      if (total <= 0) return 100;
-      return Math.round((attended / total) * 100);
+    function populateDatalist() {
+      const dl = document.getElementById('vitApCourseList');
+      if (!dl) return;
+      dl.innerHTML = '';
+      Object.keys(vitApCourseMap).forEach(code => {
+        const opt = document.createElement('option');
+        opt.value = code;
+        opt.label = `${code} - ${vitApCourseMap[code]}`;
+        dl.appendChild(opt);
+      });
     }
 
-    function getSafeBunks(attended, total, target) {
-      if (total === 0) return 0;
-      const maxAbsents = Math.floor((attended - (target / 100) * total) / (target / 100));
-      return Math.max(0, maxAbsents);
-    }
-
-    function getClassesToAttend(attended, total, target) {
-      if (getSubjectPct(attended, total) >= target) return 0;
-      const needed = Math.ceil(((target / 100) * total - attended) / (1 - target / 100));
-      return Math.max(0, needed);
-    }
-
-    function renderDashboard() {
-      let totalAttended = 0;
-      let totalHeld = 0;
-      let safeCount = 0;
-      let shortageCount = 0;
-      let totalSafeBunks = 0;
-
-      subjects.forEach(s => {
-        totalAttended += s.attended;
-        totalHeld += s.total;
-
-        const pct = getSubjectPct(s.attended, s.total);
-        if (pct >= targetPct) {
-          safeCount++;
-          totalSafeBunks += getSafeBunks(s.attended, s.total, targetPct);
+    function switchPage(pageKey) {
+      const pages = ['dashboard', 'attendance', 'timetable', 'outing'];
+      pages.forEach(p => {
+        const pageEl = document.getElementById(`page${p.charAt(0).toUpperCase() + p.slice(1)}`);
+        const navEl = document.getElementById(`navTab${p.charAt(0).toUpperCase() + p.slice(1)}`);
+        if (p === pageKey) {
+          if (pageEl) pageEl.classList.remove('hidden');
+          if (navEl) navEl.className = "px-4 py-2 rounded-xl text-xs font-bold transition-all bg-indigo-600 text-white shadow-md shadow-indigo-600/30 whitespace-nowrap";
         } else {
-          shortageCount++;
+          if (pageEl) pageEl.classList.add('hidden');
+          if (navEl) navEl.className = "px-4 py-2 rounded-xl text-xs font-bold transition-all bg-slate-800/80 text-slate-400 hover:text-white whitespace-nowrap";
         }
       });
-
-      const overallPct = totalHeld > 0 ? Math.round((totalAttended / totalHeld) * 100) : 0;
-
-      document.getElementById('statOverallPct').innerText = `${overallPct}%`;
-      document.getElementById('statOverallDetail').innerText = `${totalAttended} / ${totalHeld} Classes Attended`;
-      document.getElementById('statTotalSubjects').innerText = subjects.length;
-      document.getElementById('statSafeSubjects').innerText = `${safeCount} Subjects in Safe Zone`;
-      document.getElementById('statTotalSafeBunks').innerText = totalSafeBunks;
-      document.getElementById('statShortageCount').innerText = shortageCount;
-
-      const tbody = document.getElementById('subjectTableBody');
-      if (tbody) {
-        if (subjects.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-500">No subjects added yet. Click "Add Course" above.</td></tr>`;
-        } else {
-          tbody.innerHTML = subjects.map(s => {
-            const pct = getSubjectPct(s.attended, s.total);
-            const safeBunks = getSafeBunks(s.attended, s.total, targetPct);
-            const needed = getClassesToAttend(s.attended, s.total, targetPct);
-            const isSafe = pct >= targetPct;
-
-            return `
-              <tr class="hover:bg-slate-800/40 transition-colors">
-                <td class="py-3">
-                  <div class="font-bold text-slate-100">${s.code}</div>
-                  <div class="text-[11px] text-slate-400">${s.name}</div>
-                </td>
-                <td class="py-3 text-center font-medium">${s.attended} / ${s.total}</td>
-                <td class="py-3 text-center">
-                  <span class="font-extrabold ${isSafe ? 'text-indigo-400' : 'text-rose-400'}">${pct}%</span>
-                </td>
-                <td class="py-3 text-center">
-                  ${isSafe ? 
-                    `<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-semibold border border-emerald-500/20">${safeBunks} Safe Bunks</span>` : 
-                    `<span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 text-[10px] font-semibold border border-rose-500/20">Attend +${needed}</span>`}
-                </td>
-                <td class="py-3 text-right">
-                  <div class="inline-flex items-center space-x-1">
-                    <button onclick="quickUpdateAttendance('${s.id}', 1, 1)" title="Attend Class" class="px-2 py-1 rounded-lg bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white font-bold text-[11px] transition-all">+ Present</button>
-                    <button onclick="quickUpdateAttendance('${s.id}', 0, 1)" title="Bunk Class" class="px-2 py-1 rounded-lg bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white font-bold text-[11px] transition-all">+ Bunk</button>
-                  </div>
-                </td>
-              </tr>
-            `;
-          }).join('');
-        }
-      }
-
-      const simSelect = document.getElementById('simSubjectSelect');
-      if (simSelect) {
-        simSelect.innerHTML = subjects.map(s => `<option value="${s.id}">${s.code} - ${s.name}</option>`).join('');
-      }
-      runBunkSimulation();
     }
 
-    function adjustSimMissed(delta) {
-      simMissedCount = Math.max(0, simMissedCount + delta);
-      document.getElementById('simMissedVal').innerText = simMissedCount;
-      runBunkSimulation();
-    }
-
-    function adjustSimAttended(delta) {
-      simAttendedCount = Math.max(0, simAttendedCount + delta);
-      document.getElementById('simAttendedVal').innerText = simAttendedCount;
-      runBunkSimulation();
-    }
-
-    function runBunkSimulation() {
-      const simSelect = document.getElementById('simSubjectSelect');
-      if (!simSelect || subjects.length === 0) return;
-
-      const subId = simSelect.value;
-      const sub = subjects.find(s => s.id === subId);
-      if (!sub) return;
-
-      const curPct = getSubjectPct(sub.attended, sub.total);
-      const projAttended = sub.attended + simAttendedCount;
-      const projTotal = sub.total + simMissedCount + simAttendedCount;
-      const projPct = projTotal > 0 ? Math.round((projAttended / projTotal) * 100) : 100;
-
-      document.getElementById('simCurrentPct').innerText = `${curPct}%`;
-      document.getElementById('simProjectedPct').innerText = `${projPct}%`;
-
-      const adviceEl = document.getElementById('simAdviceText');
-      if (adviceEl) {
-        if (projPct >= targetPct) {
-          adviceEl.className = "text-[11px] mt-2 font-medium text-emerald-400";
-          adviceEl.innerText = `✅ Safe! After these changes, your attendance stays above the target ${targetPct}%.`;
-        } else {
-          adviceEl.className = "text-[11px] mt-2 font-medium text-rose-400";
-          adviceEl.innerText = `⚠️ Shortage Risk! Projected attendance drops below target threshold (${targetPct}%).`;
-        }
-      }
-    }
-
-    function renderCards() {
-      const cardsGrid = document.getElementById('cardsGrid');
-      if (!cardsGrid) return;
-
-      if (subjects.length === 0) {
-        cardsGrid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500">No attendance cards available. Add subjects to view.</div>`;
-        return;
-      }
-
-      cardsGrid.innerHTML = subjects.map(s => {
-        const pct = getSubjectPct(s.attended, s.total);
-        const safeBunks = getSafeBunks(s.attended, s.total, targetPct);
-        const needed = getClassesToAttend(s.attended, s.total, targetPct);
-        const isSafe = pct >= targetPct;
-
-        return `
-          <div class="bg-[#151c2c] border border-[#222d45] rounded-2xl p-5 shadow-sm space-y-4 relative group">
-            <div class="flex items-start justify-between">
-              <div>
-                <span class="text-xs font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded">${s.code}</span>
-                <h3 class="font-bold text-base text-slate-100 mt-1">${s.name}</h3>
-              </div>
-              <div class="flex items-center space-x-1">
-                <button onclick="openEditSubjectModal('${s.id}')" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800"><i class="fa-solid fa-pen text-xs"></i></button>
-                <button onclick="deleteSubject('${s.id}')" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800"><i class="fa-solid fa-trash text-xs"></i></button>
-              </div>
-            </div>
-
-            <div class="flex items-baseline justify-between pt-2">
-              <div>
-                <div class="text-3xl font-extrabold ${isSafe ? 'text-indigo-400' : 'text-rose-400'}">${pct}%</div>
-                <div class="text-xs text-slate-400 mt-0.5">${s.attended} of ${s.total} attended</div>
-              </div>
-              <div>
-                ${isSafe ? 
-                  `<div class="text-right"><span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-lg border border-emerald-500/20">${safeBunks} Bunks Available</span></div>` : 
-                  `<div class="text-right"><span class="text-xs font-bold text-rose-400 bg-rose-500/10 px-2 py-1 rounded-lg border border-rose-500/20">Must attend +${needed}</span></div>`}
-              </div>
-            </div>
-
-            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
-              <div class="h-full ${isSafe ? 'bg-gradient-to-r from-indigo-500 to-emerald-400' : 'bg-rose-500'}" style="width: ${Math.min(100, pct)}%"></div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-2 pt-2">
-              <button onclick="quickUpdateAttendance('${s.id}', 1, 1)" class="py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white font-semibold text-xs transition-all flex items-center justify-center space-x-1">
-                <i class="fa-solid fa-check"></i>
-                <span>Present</span>
-              </button>
-              <button onclick="quickUpdateAttendance('${s.id}', 0, 1)" class="py-2 rounded-xl bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white font-semibold text-xs transition-all flex items-center justify-center space-x-1">
-                <i class="fa-solid fa-xmark"></i>
-                <span>Bunked</span>
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function selectScheduleDay(day) {
-      selectedDay = day;
-      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      days.forEach(d => {
-        const btn = document.getElementById(`day-${d}`);
-        if (btn) {
-          if (d === day) {
-            btn.className = 'day-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition-all';
-          } else {
-            btn.className = 'day-tab px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all';
-          }
-        }
-      });
-
-      const fullDayMap = { 'Mon': 'Monday', 'Tue': 'Tuesday', 'Wed': 'Wednesday', 'Thu': 'Thursday', 'Fri': 'Friday', 'Sat': 'Saturday' };
-      const titleEl = document.getElementById('selectedDayTitle');
-      if (titleEl) titleEl.innerText = fullDayMap[day] || day;
-
-      const badgeEl = document.getElementById('activeDayBadge');
-      if (badgeEl) badgeEl.innerText = fullDayMap[day] || day;
-
-      renderTimetable();
-    }
-
-    function applyPresetSlot(startH, startM, startP, endH, endM, endP, slotType) {
-      document.getElementById('ttStartHour').value = startH;
-      document.getElementById('ttStartMin').value = startM;
-      document.getElementById('ttStartPeriod').value = startP;
-
-      document.getElementById('ttEndHour').value = endH;
-      document.getElementById('ttEndMin').value = endM;
-      document.getElementById('ttEndPeriod').value = endP;
-
-      if (slotType) {
-        document.getElementById('ttTypeSelect').value = slotType;
-      }
-    }
-
-    function renderTimetable() {
-      const ttSelect = document.getElementById('ttSubjectSelect');
-      if (ttSelect) {
-        ttSelect.innerHTML = subjects.map(s => `<option value="${s.id}">${s.code} - ${s.name}</option>`).join('');
-      }
-
-      const daySlots = timetable.filter(t => t.day === selectedDay);
-      document.getElementById('dayClassCount').innerText = `${daySlots.length} Classes`;
-
-      const ttList = document.getElementById('timetableList');
-      if (!ttList) return;
-
-      if (daySlots.length === 0) {
-        ttList.innerHTML = `<div class="text-center py-10 text-slate-500 text-xs">No classes scheduled for this day. Pick a Theory or Lab preset to add a slot.</div>`;
-        return;
-      }
-
-      ttList.innerHTML = daySlots.map(slot => {
-        const sub = subjects.find(s => s.id === slot.subjectId) || { code: 'N/A', name: 'Unknown Subject' };
-        const isLab = slot.type === 'Lab';
-
-        return `
-          <div class="bg-slate-900/80 border ${isLab ? 'border-purple-500/30' : 'border-indigo-500/20'} rounded-xl p-3.5 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-              <div class="w-10 h-10 rounded-lg ${isLab ? 'bg-purple-500/15 text-purple-400 border border-purple-500/30' : 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/30'} flex flex-col items-center justify-center text-[10px] font-bold">
-                <i class="${isLab ? 'fa-solid fa-flask-vial' : 'fa-solid fa-book-open'} text-xs mb-0.5"></i>
-                <span>${slot.type}</span>
-              </div>
-              <div>
-                <div class="font-bold text-xs text-slate-200 flex items-center space-x-2">
-                  <span>${sub.code} - ${sub.name}</span>
-                  <span class="text-[9px] px-1.5 py-0.2 rounded font-semibold ${isLab ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40' : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'}">${slot.type.toUpperCase()}</span>
-                </div>
-                <div class="text-[11px] text-slate-400 mt-0.5 flex items-center space-x-3">
-                  <span><i class="fa-regular fa-clock text-indigo-400 mr-1"></i>${slot.startH}:${slot.startM} ${slot.startP} - ${slot.endH}:${slot.endM} ${slot.endP}</span>
-                  <span><i class="fa-solid fa-location-dot text-indigo-400 mr-1"></i>${slot.venue || 'TBA'}</span>
-                </div>
-              </div>
-            </div>
-            <button onclick="deleteTimetableSlot('${slot.id}')" class="p-2 text-slate-500 hover:text-rose-400 transition-colors">
-              <i class="fa-solid fa-trash-can text-xs"></i>
-            </button>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function addScheduleItem() {
-      const subId = document.getElementById('ttSubjectSelect').value;
-      if (!subId) return;
-
-      const startH = document.getElementById('ttStartHour').value;
-      const startM = document.getElementById('ttStartMin').value;
-      const startP = document.getElementById('ttStartPeriod').value;
-
-      const endH = document.getElementById('ttEndHour').value;
-      const endM = document.getElementById('ttEndMin').value;
-      const endP = document.getElementById('ttEndPeriod').value;
-
-      const venue = document.getElementById('ttVenueInput').value.trim();
-      const type = document.getElementById('ttTypeSelect').value;
-
-      const newSlot = {
-        id: 'tt-' + Date.now(),
-        day: selectedDay,
-        subjectId: subId,
-        startH, startM, startP,
-        endH, endM, endP,
-        venue,
-        type
-      };
-
-      timetable.push(newSlot);
-      saveTimetable();
-      renderTimetable();
-    }
-
-    function deleteTimetableSlot(slotId) {
-      timetable = timetable.filter(t => t.id !== slotId);
-      saveTimetable();
-      renderTimetable();
-    }
-
-    function calculateOutingImpact() {
-      const startVal = document.getElementById('outingStartDate').value;
-      const endVal = document.getElementById('outingEndDate').value;
-
-      if (!startVal || !endVal) return;
-
-      const startDate = new Date(startVal);
-      const endDate = new Date(endVal);
-
-      if (endDate < startDate) return;
-
-      const dayMap = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      const missedCounts = {};
-      subjects.forEach(s => missedCounts[s.id] = 0);
-
-      let cur = new Date(startDate);
-      let totalMissed = 0;
-
-      while (cur <= endDate) {
-        const dayName = dayMap[cur.getDay()];
-        const daySlots = timetable.filter(t => t.day === dayName);
-
-        daySlots.forEach(slot => {
-          if (missedCounts[slot.subjectId] !== undefined) {
-            missedCounts[slot.subjectId]++;
-            totalMissed++;
-          }
-        });
-
-        cur.setDate(cur.getDate() + 1);
-      }
-
-      const resultCard = document.getElementById('outingResultCard');
-      if (resultCard) resultCard.classList.remove('hidden');
-
-      const missedEl = document.getElementById('totalMissedInOuting');
-      if (missedEl) missedEl.innerText = totalMissed;
-
-      const tbody = document.getElementById('outingBreakdownBody');
-      if (!tbody) return;
-
-      let rowsHTML = '';
-      let anyShortage = false;
-
-      subjects.forEach(s => {
-        const missed = missedCounts[s.id] || 0;
-        const curPct = getSubjectPct(s.attended, s.total);
-        const projAttended = s.attended;
-        const projTotal = s.total + missed;
-        const projPct = projTotal > 0 ? Math.round((projAttended / projTotal) * 100) : 100;
-
-        if (projPct < targetPct) anyShortage = true;
-
-        rowsHTML += `
-          <tr class="hover:bg-slate-800/50">
-            <td class="py-2.5 font-semibold text-slate-200">${s.code} - ${s.name}</td>
-            <td class="py-2.5 text-center font-bold text-amber-400">${missed}</td>
-            <td class="py-2.5 text-center text-slate-400">${curPct}%</td>
-            <td class="py-2.5 text-center font-extrabold ${projPct >= targetPct ? 'text-indigo-400' : 'text-rose-400'}">${projPct}%</td>
-            <td class="py-2.5 text-right">
-              ${projPct >= targetPct ? 
-                '<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-bold">Safe</span>' : 
-                '<span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 text-[10px] font-bold">Shortage Risk</span>'}
-            </td>
-          </tr>
-        `;
-      });
-
-      tbody.innerHTML = rowsHTML;
-
-      const banner = document.getElementById('verdictBanner');
-      const vIcon = document.getElementById('verdictIcon');
-      const vTitle = document.getElementById('verdictTitle');
-      const vSub = document.getElementById('verdictSubtitle');
-
-      if (!anyShortage) {
-        if (banner) banner.className = 'flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30';
-        if (vIcon) {
-          vIcon.className = 'w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl font-bold';
-          vIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
-        }
-        if (vTitle) {
-          vTitle.innerText = "Safe to go on Outing! 🎉";
-          vTitle.className = "font-extrabold text-lg text-emerald-300";
-        }
-        if (vSub) vSub.innerText = "All subject attendance projected levels stay well above your target limit.";
-      } else {
-        if (banner) banner.className = 'flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-rose-500/10 border border-rose-500/30';
-        if (vIcon) {
-          vIcon.className = 'w-12 h-12 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-xl font-bold';
-          vIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
-        }
-        if (vTitle) {
-          vTitle.innerText = "Attendance Shortage Danger! ⚠️";
-          vTitle.className = "font-extrabold text-lg text-rose-300";
-        }
-        if (vSub) vSub.innerText = "Going on this trip will cause 1 or more subjects to drop below your threshold.";
-      }
-    }
-
-    function quickUpdateAttendance(subId, addAttended, addTotal) {
-      const sub = subjects.find(s => s.id === subId);
-      if (!sub) return;
-
-      sub.attended = Math.max(0, sub.attended + addAttended);
-      sub.total = Math.max(sub.attended, sub.total + addTotal);
-
-      saveSubjects();
-      renderAll();
-    }
-
-    function openAddSubjectModal() {
-      editingSubjectId = null;
-      document.getElementById('modalTitle').innerText = 'Add New Subject';
-      document.getElementById('modalSubName').value = '';
-      document.getElementById('modalSubCode').value = '';
-      document.getElementById('modalAttended').value = 0;
-      document.getElementById('modalTotal').value = 0;
-      document.getElementById('subjectModal').classList.remove('hidden');
-    }
-
-    function openEditSubjectModal(subId) {
-      const sub = subjects.find(s => s.id === subId);
-      if (!sub) return;
-
-      editingSubjectId = subId;
-      document.getElementById('modalTitle').innerText = 'Edit Subject';
-      document.getElementById('modalSubName').value = sub.name;
-      document.getElementById('modalSubCode').value = sub.code;
-      document.getElementById('modalAttended').value = sub.attended;
-      document.getElementById('modalTotal').value = sub.total;
-      document.getElementById('subjectModal').classList.remove('hidden');
-    }
-
-    function closeAddSubjectModal() {
-      document.getElementById('subjectModal').classList.add('hidden');
-    }
-
-    function saveSubjectFromModal() {
-      const name = document.getElementById('modalSubName').value.trim();
-      const code = document.getElementById('modalSubCode').value.trim().toUpperCase();
-      const attended = parseInt(document.getElementById('modalAttended').value, 10) || 0;
-      const total = parseInt(document.getElementById('modalTotal').value, 10) || 0;
-
-      if (!name || !code) return;
-
-      if (editingSubjectId) {
-        const sub = subjects.find(s => s.id === editingSubjectId);
-        if (sub) {
-          sub.name = name;
-          sub.code = code;
-          sub.attended = attended;
-          sub.total = total;
-        }
-      } else {
-        const newSub = {
-          id: 'sub-' + Date.now(),
-          code,
-          name,
-          attended,
-          total
-        };
-        subjects.push(newSub);
-      }
-
-      saveSubjects();
-      closeAddSubjectModal();
-      renderAll();
-    }
-
-    function deleteSubject(subId) {
-      subjects = subjects.filter(s => s.id !== subId);
-      timetable = timetable.filter(t => t.subjectId !== subId);
-      saveSubjects();
-      saveTimetable();
-      renderAll();
-    }
-
-    function resetAllAttendanceData() {
-      subjects = [...defaultSubjects];
-      timetable = [...defaultTimetable];
-      saveSubjects();
-      saveTimetable();
-      renderAll();
+    function setSlotPreset(sH, sM, sA, eH, eM, eA) {
+      document.getElementById('ttStartHour').value = sH;
+      document.getElementById('ttStartMin').value = sM;
+      document.getElementById('ttStartAmpm').value = sA;
+      document.getElementById('ttEndHour').value = eH;
+      document.getElementById('ttEndMin').value = eM;
+      document.getElementById('ttEndAmpm').value = eA;
     }
 
     function renderAll() {
-      renderDashboard();
-      renderCards();
+      renderStatCards();
+      renderDashboardTable();
+      renderSimOptions();
+      renderSimulatorUI();
+      renderAttendanceCards();
       renderTimetable();
+      renderBestDays();
     }
 
-    window.onload = function() {
-      loadData();
-      switchTab('dashboard');
-      selectScheduleDay('Mon');
-    };
+    function renderStatCards() {
+      let totAtt = 0;
+      let totHeld = 0;
+      subjects.forEach(s => {
+        totAtt += s.attended;
+        totHeld += s.total;
+      });
+
+      document.getElementById('statTotalSubjects').innerText = subjects.length;
+      document.getElementById('statTotalHeld').innerText = `${totAtt} / ${totHeld}`;
+      
+      const overallPct = totHeld > 0 ? ((totAtt / totHeld) * 100) : 0;
+      document.getElementById('statOverallPct').innerText = `${overallPct.toFixed(1)}%`;
+      document.getElementById('statTargetGoal').innerText = `${targetGoal}%`;
+    }
+
+    function updateCourseCode(idx, codeVal) {
+      const formattedCode = codeVal.trim().toUpperCase();
+      subjects[idx].code = formattedCode;
+      
+      if (vitApCourseMap[formattedCode]) {
+        subjects[idx].name = vitApCourseMap[formattedCode];
+      }
+      renderAll();
+    }
+
+    function renderDashboardTable() {
+      const tbody = document.getElementById('dashboardTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      subjects.forEach((sub, idx) => {
+        const pct = sub.total > 0 ? ((sub.attended / sub.total) * 100) : 0;
+        
+        let pctColor = 'text-cyan-400';
+        if (sub.total > 0) {
+          if (pct >= targetGoal) pctColor = 'text-emerald-400';
+          else pctColor = 'text-rose-400';
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-800/30 transition-colors";
+        tr.innerHTML = `
+          <td class="py-3 px-3">
+            <input type="text" list="vitApCourseList" placeholder="e.g. CSE2005" value="${sub.code || ''}" oninput="updateCourseCode(${idx}, this.value)" onchange="updateCourseCode(${idx}, this.value)" class="bg-slate-900 border border-slate-800/80 rounded-lg px-2.5 py-1.5 text-xs text-indigo-400 font-bold uppercase outline-none focus:border-indigo-500 w-24 sm:w-28">
+          </td>
+          <td class="py-3 px-3">
+            <div class="flex items-center gap-2">
+              <input type="text" value="${sub.name}" onchange="updateSub(${idx}, 'name', this.value)" class="bg-slate-900 border border-slate-800/80 rounded-lg px-2.5 py-1.5 text-xs text-white font-bold outline-none focus:border-cyan-500 w-36 sm:w-56">
+            </div>
+          </td>
+          <td class="py-3 px-3 text-center">
+            <input type="number" min="0" value="${sub.attended}" onchange="updateSub(${idx}, 'attended', this.value)" class="bg-slate-900 border border-slate-800/80 rounded-lg px-2.5 py-1.5 text-xs text-center text-white font-bold outline-none focus:border-cyan-500 w-16">
+          </td>
+          <td class="py-3 px-3 text-center">
+            <input type="number" min="0" value="${sub.total}" onchange="updateSub(${idx}, 'total', this.value)" class="bg-slate-900 border border-slate-800/80 rounded-lg px-2.5 py-1.5 text-xs text-center text-white font-bold outline-none focus:border-cyan-500 w-16">
+          </td>
+          <td class="py-3 px-3 text-center font-extrabold ${pctColor}">
+            ${pct.toFixed(1)}%
+          </td>
+          <td class="py-3 px-3 text-right">
+            <button onclick="deleteSub(${idx})" class="p-2 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all">
+              <i class="fa-solid fa-trash text-xs"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderSimOptions() {
+      const select = document.getElementById('simSubjectSelect');
+      if (!select) return;
+      select.innerHTML = '';
+
+      if (subjects.length === 0) return;
+
+      if (!subjects.find(s => s.id === selectedSimId)) {
+        selectedSimId = subjects[0].id;
+      }
+
+      subjects.forEach(s => {
+        const pct = s.total > 0 ? ((s.attended / s.total) * 100).toFixed(1) : '0.0';
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.innerText = `${s.code ? s.code + ' - ' : ''}${s.name} (${pct}%)`;
+        if (s.id === selectedSimId) opt.selected = true;
+        select.appendChild(opt);
+      });
+    }
+
+    function onSimSubjectChange() {
+      selectedSimId = document.getElementById('simSubjectSelect').value;
+      renderSimulatorUI();
+    }
+
+    function renderSimulatorUI() {
+      const sub = subjects.find(s => s.id === selectedSimId);
+      if (!sub) return;
+
+      document.getElementById('simSelectedName').innerText = `${sub.code ? sub.code + ': ' : ''}${sub.name}`;
+      document.getElementById('simAttendedTotalDisplay').innerText = `${sub.attended} / ${sub.total}`;
+
+      const pct = sub.total > 0 ? ((sub.attended / sub.total) * 100) : 0;
+      document.getElementById('simCurrentPctDisplay').innerText = `${pct.toFixed(1)}%`;
+      document.getElementById('simTargetVal').innerText = `${targetGoal}%`;
+      document.getElementById('simTargetSlider').value = targetGoal;
+
+      const badge = document.getElementById('simStatusBadge');
+      const text = document.getElementById('simAnalysisText');
+
+      if (sub.total === 0) {
+        badge.className = "px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-slate-800 text-slate-400";
+        badge.innerText = "No Classes Conducted";
+        text.innerText = "Enter attended & total conducted classes in the table below. Target threshold set to " + targetGoal + "%.";
+      } else if (pct >= targetGoal) {
+        const allowed = Math.floor((sub.attended * 100 - targetGoal * sub.total) / targetGoal);
+        badge.className = "px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400";
+        badge.innerText = `Safe (+${Math.max(0, allowed)} Bunks)`;
+        text.innerText = `You are safely above the ${targetGoal}% threshold! You can bunk up to ${Math.max(0, allowed)} class(es) without falling below target.`;
+      } else {
+        const required = Math.ceil((targetGoal * sub.total - 100 * sub.attended) / (100 - targetGoal));
+        badge.className = "px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-rose-500/20 text-rose-400";
+        badge.innerText = `Shortage (${Math.max(0, required)} Needed)`;
+        text.innerText = `Attendance is currently below ${targetGoal}%. You need to attend the next ${Math.max(0, required)} consecutive class(es) to recover.`;
+      }
+    }
+
+    function onTargetSliderChange(val) {
+      targetGoal = parseInt(val) || 75;
+      renderAll();
+    }
+
+    function simAdjust(addAtt, addTot) {
+      const idx = subjects.findIndex(s => s.id === selectedSimId);
+      if (idx !== -1) {
+        subjects[idx].attended = Math.max(0, subjects[idx].attended + addAtt);
+        subjects[idx].total = Math.max(0, subjects[idx].total + addTot);
+        renderAll();
+      }
+    }
+
+    function simReset() {
+      const idx = subjects.findIndex(s => s.id === selectedSimId);
+      if (idx !== -1) {
+        subjects[idx].attended = 0;
+        subjects[idx].total = 0;
+        renderAll();
+      }
+    }
+
+    function updateSub(idx, field, val) {
+      if (field === 'name') subjects[idx].name = val;
+      else subjects[idx][field] = Math.max(0, parseInt(val) || 0);
+      renderAll();
+    }
+
+    function deleteSub(idx) {
+      subjects.splice(idx, 1);
+      renderAll();
+    }
+
+    function addNewSubjectRow() {
+      subjects.push({
+        id: Date.now().toString(),
+        code: '',
+        name: `Subject-${subjects.length + 1}`,
+        attended: 0,
+        total: 0
+      });
+      renderAll();
+    }
+
+    function renderAttendanceCards() {
+      const container = document.getElementById('attendanceCardsGrid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      subjects.forEach((sub, idx) => {
+        const pct = sub.total > 0 ? ((sub.attended / sub.total) * 100) : 0;
+        const isSafe = pct >= targetGoal;
+
+        let advice = "";
+        if (sub.total === 0) advice = "No classes conducted yet";
+        else if (isSafe) {
+          const bunks = Math.floor((sub.attended * 100 - targetGoal * sub.total) / targetGoal);
+          advice = `Can miss ${Math.max(0, bunks)} class(es)`;
+        } else {
+          const need = Math.ceil((targetGoal * sub.total - 100 * sub.attended) / (100 - targetGoal));
+          advice = `Need to attend ${Math.max(0, need)} class(es)`;
+        }
+
+        const div = document.createElement('div');
+        div.className = "glass-card p-5 space-y-3";
+        div.innerHTML = `
+          <div class="grid grid-cols-3 gap-2">
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 mb-1">CODE</label>
+              <input type="text" list="vitApCourseList" placeholder="Code" value="${sub.code || ''}" oninput="updateCourseCode(${idx}, this.value)" onchange="updateCourseCode(${idx}, this.value)" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs font-bold text-indigo-400 uppercase outline-none focus:border-indigo-500">
+            </div>
+            <div class="col-span-2">
+              <label class="block text-[10px] font-bold text-slate-400 mb-1">SUBJECT</label>
+              <input type="text" value="${sub.name}" onchange="updateSub(${idx}, 'name', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs font-bold text-white outline-none focus:border-indigo-500">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 mb-1">HELD</label>
+              <input type="number" value="${sub.total}" min="0" onchange="updateSub(${idx}, 'total', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs font-bold text-white text-center outline-none focus:border-indigo-500">
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 mb-1">ATTENDED</label>
+              <input type="number" value="${sub.attended}" min="0" onchange="updateSub(${idx}, 'attended', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs font-bold text-white text-center outline-none focus:border-indigo-500">
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+            <div>
+              <div class="text-base font-extrabold ${isSafe ? 'text-emerald-400' : 'text-rose-400'}">${pct.toFixed(1)}%</div>
+              <div class="text-[11px] font-medium text-slate-400">${advice}</div>
+            </div>
+            <button onclick="deleteSub(${idx})" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 text-xs font-bold transition-all">
+              Remove
+            </button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderTimetable() {
+      const sel = document.getElementById('ttSubjectSelect');
+      if (sel) {
+        sel.innerHTML = '';
+        subjects.forEach(s => {
+          const opt = document.createElement('option');
+          const displayName = s.code ? `${s.code} - ${s.name}` : s.name;
+          opt.value = displayName;
+          opt.innerText = displayName;
+          sel.appendChild(opt);
+        });
+      }
+
+      const list = document.getElementById('timetableDisplayList');
+      if (!list) return;
+      list.innerHTML = '';
+
+      if (timetable.length === 0) {
+        list.innerHTML = `<div class="text-xs text-slate-500 italic">No classes scheduled.</div>`;
+        return;
+      }
+
+      timetable.forEach((t, idx) => {
+        const div = document.createElement('div');
+        div.className = "flex items-center justify-between bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs";
+        div.innerHTML = `
+          <div>
+            <div class="font-bold text-white">${t.day} - <span class="text-indigo-400">${t.subject}</span></div>
+            <div class="text-[11px] text-slate-500">${t.startTime} - ${t.endTime}</div>
+          </div>
+          <button onclick="deleteTimetable(${idx})" class="text-slate-500 hover:text-rose-400 text-xs">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function addTimetableClass() {
+      const day = document.getElementById('ttDayInput').value;
+      const subject = document.getElementById('ttSubjectSelect').value;
+      
+      const sH = document.getElementById('ttStartHour').value;
+      const sM = document.getElementById('ttStartMin').value;
+      const sA = document.getElementById('ttStartAmpm').value;
+      
+      const eH = document.getElementById('ttEndHour').value;
+      const eM = document.getElementById('ttEndMin').value;
+      const eA = document.getElementById('ttEndAmpm').value;
+
+      const startTime = `${sH}:${sM} ${sA}`;
+      const endTime = `${eH}:${eM} ${eA}`;
+
+      if (!subject) return;
+
+      timetable.push({ id: Date.now().toString(), day, subject, startTime, endTime });
+      renderAll();
+    }
+
+    function deleteTimetable(idx) {
+      timetable.splice(idx, 1);
+      renderAll();
+    }
+
+    function checkOutingImpact() {
+      const start = document.getElementById('outingStartDate').value;
+      const end = document.getElementById('outingEndDate').value;
+      const minPct = parseFloat(document.getElementById('outingMinPct').value) || targetGoal;
+
+      const box = document.getElementById('outingResultBox');
+      if (!box) return;
+      box.classList.remove('hidden');
+
+      if (!start || !end) {
+        box.className = "p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-bold";
+        box.innerText = "Please select both outing and return dates.";
+        return;
+      }
+
+      let missedCount = 0;
+      let temp = new Date(start);
+      const endDate = new Date(end);
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+      while (temp <= endDate) {
+        const dName = days[temp.getDay()];
+        missedCount += timetable.filter(t => t.day === dName).length;
+        temp.setDate(temp.getDate() + 1);
+      }
+
+      let totAtt = 0;
+      let totHeld = 0;
+      subjects.forEach(s => {
+        totAtt += s.attended;
+        totHeld += s.total;
+      });
+
+      const projHeld = totHeld + missedCount;
+      const projPct = projHeld > 0 ? ((totAtt / projHeld) * 100) : 0;
+      const isSafe = projPct >= minPct;
+
+      box.className = `p-4 rounded-xl border text-xs space-y-1 ${isSafe ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' : 'bg-rose-500/10 border-rose-500/30 text-rose-300'}`;
+      box.innerHTML = `
+        <div class="font-extrabold text-sm">${isSafe ? '✅ Safe to go on outing!' : '⚠️ Shortage Risk Alert!'}</div>
+        <div>Total classes missed during trip: <strong>${missedCount}</strong></div>
+        <div>Projected overall attendance: <strong>${projPct.toFixed(1)}%</strong></div>
+      `;
+    }
+
+    function renderBestDays() {
+      const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      const counts = days.map(d => ({
+        day: d,
+        cnt: timetable.filter(t => t.day === d).length
+      })).sort((a,b) => a.cnt - b.cnt);
+
+      const list = document.getElementById('bestOutingDaysList');
+      if (!list) return;
+      list.innerHTML = '';
+
+      counts.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = "flex items-center justify-between border-b border-slate-800/60 pb-1.5 text-slate-300 font-medium";
+        div.innerHTML = `
+          <span>#${idx + 1} ${item.day}</span>
+          <span class="text-slate-500 font-bold">${item.cnt} classes</span>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    window.onload = init;
   </script>
 </body>
 </html>
